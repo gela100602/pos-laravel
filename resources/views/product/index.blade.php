@@ -66,7 +66,6 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        // return data ? `<img src="{{ asset('storage') }}/${data}" alt="Product Image" style="max-height: 50px;">` : '';
                         return data ? '<img src="{{ asset('storage') }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '';
                     }
                 },
@@ -81,34 +80,58 @@
             ]
         });
 
+        // Ensure CSRF token is included in all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         $('#product-form').validator().on('submit', function (e) {
             if (!e.isDefaultPrevented()) {
-                let url = $('#product-form').attr('action');
-                let method = $('#product-form [name=_method]').val() === 'PUT' ? 'PUT' : 'POST';
-                let formData = new FormData($('#product-form')[0]);
+                let url = $(this).attr('action');
+                let method = $(this).find('[name=_method]').val() === 'PUT' ? 'PUT' : 'POST';
+                
+                // Create FormData object and append necessary fields
+                let formData = new FormData(this);
+                formData.append('_method', method); // Ensure _method is set correctly
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // CSRF token
+                
                 $.ajax({
                     url: url,
-                    type: method,
+                    type: 'POST', // Always use POST for FormData
                     data: formData,
-                    contentType: false,
-                    processData: false,
+                    contentType: false, // No need to set contentType when FormData is used
+                    processData: false, // No need to process data when FormData is used
                     success: function (response) {
                         $('#modal-form').modal('hide');
                         $('#product-form')[0].reset();
-                        location.reload();
                         table.ajax.reload();
                     },
                     error: function (xhr) {
-                        alert('Unable to save data');
-                        return;
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            let errors = xhr.responseJSON.errors;
+                            for (let field in errors) {
+                                let errorMessages = errors[field];
+                                alert(field + ": " + errorMessages.join(", "));
+                            }
+                        } else {
+                            alert('Unable to save data');
+                        }
                     }
                 });
+
                 return false;
             }
         });
 
+
+
         $('#modal-form').on('hidden.bs.modal', function () {
             $('#image-preview').hide().attr('src', '');
+            $('#product-form')[0].reset();
+            $('#product-form [name=_method]').val('POST');
+            $('#product-form').attr('action', '');
         });
 
         $('[name=select_all]').on('click', function () {
@@ -119,7 +142,6 @@
     function addForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Add Product');
-
         $('#product-form')[0].reset();
         $('#product-form').attr('action', url);
         $('#product-form [name=_method]').val('POST');
@@ -129,11 +151,8 @@
     function editForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Edit Product');
-
-        // $('#product-form')[0].reset();
         $('#product-form').attr('action', url);
-        $('#product-form [name=_method]').val('PUT');
-        $('#product_name').focus();
+        $('#product-form [name=_method]').val('PUT'); // Ensure _method is set to PUT
 
         $.get(url)
             .done(function (response) {
@@ -144,50 +163,60 @@
                 $('#selling_price').val(response.selling_price);
                 $('#discount').val(response.discount);
                 $('#stock').val(response.stock);
+
+                // Display product image if available
                 if (response.product_image) {
                     $('#image-preview').attr('src', '{{ asset('storage') }}/' + response.product_image).show();
+                } else {
+                    $('#image-preview').attr('src', '').hide();
                 }
             })
-
-            .fail(function (errors) {
+            .fail(function (xhr, status, error) {
+                console.error('Error fetching data:', error);
                 alert('Unable to display data');
-                return;
             });
     }
 
     function deleteData(url) {
         if (confirm('Are you sure you want to delete selected data?')) {
-            $.post(url, {
-                    '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'delete'
-                })
-                .done((response) => {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    '_token': $('meta[name="csrf-token"]').attr('content'),
+                    '_method': 'DELETE'
+                },
+                success: function(response) {
                     table.ajax.reload();
-                    location.reload();
-                })
-                .fail((errors) => {
+                },
+                error: function(errors) {
                     alert('Unable to delete data');
-                    return;
-                });
+                }
+            });
         }
     }
+
 
     function deleteSelected(url) {
         if ($('input:checked').length > 0) {
             if (confirm('Are you sure you want to delete the selected data?')) {
-                $.post(url, $('.form-product').serialize())
-                    .done((response) => {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        '_token': $('meta[name="csrf-token"]').attr('content'),
+                        'product_id': $('.form-product').serializeArray()
+                    },
+                    success: function(response) {
                         table.ajax.reload();
-                        location.reload();
-                    })
-                    .fail((errors) => {
+                    },
+                    error: function(errors) {
                         alert('Unable to delete data');
-                        return;
-                    });
+                    }
+                });
             }
         } else {
             alert('Select data to delete');
-            return;
         }
     }
 
@@ -196,6 +225,5 @@
         let url = URL.createObjectURL(input.files[0]);
         $('#image-preview').attr('src', url).show();
     });
-
 </script>
 @endpush
