@@ -3,6 +3,6 @@
         <b>Version</b> 1.0.00
     </div>
     {{-- nama_perusahaan = company_name --}}
-    <strong>&copy; {{ date('Y') }} <a href="/">{{ $setting->nama_perusahaan }}</a>.</strong> All rights
+    <strong>&copy; {{ date('Y') }} <a href="/"></a>.</strong> All rights
     reserved.
 </footer>

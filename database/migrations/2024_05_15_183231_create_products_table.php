@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id('product_id');
             $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('supplier_id')->nullable();
             $table->string('product_name');
-            $table->string('brand')->nullable;
             $table->decimal('purchase_price', 10, 2);
             $table->decimal('selling_price', 10, 2);
-            $table->tinyInteger('discount')->default(0);
+            $table->tinyInteger('discount')->default(0)->nullable();
             $table->integer('stock');
             $table->string('product_image', 255)->nullable();
             $table->timestamps();
@@ -28,7 +28,14 @@ return new class extends Migration
             $table->foreign('category_id')
                 ->references('category_id')
                 ->on('categories')
-                ->onUpdate('cascade');
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('supplier_id')
+                ->references('supplier_id')
+                ->on('suppliers')
+                ->onUpdate('cascade')
+                ->onDelete('set null');
         });
     }
 
