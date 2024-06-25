@@ -16,7 +16,7 @@
                     <button onclick="addForm('{{ route('products.store') }}')" class="btn btn-success btn-flat"><i class="fa fa-plus-circle"></i> Add New Product</button>
                     <button onclick="deleteSelected('{{ route('products.delete_selected') }}')" class="btn btn-danger btn-flat"><i class="fa fa-trash"></i> Delete</button>
                 </div>
-            </div>
+            </div>  
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-product">
                     @csrf
@@ -77,7 +77,7 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? '<img src="{{ asset("storage") }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '<img src="https://jkfenner.com/wp-content/uploads/2019/11/default.jpg" alt="Default Image" style="max-height: 50px;">';
+                        return data ? html(`<img src="{{ asset("storage") }}/' + data + '" alt="Product Image" style="max-height: 50px;">` : `<img src="https://jkfenner.com/wp-content/uploads/2019/11/default.jpg" alt="Default Image" style="max-height: 50px;">`);
                     },
                 },
                 {data: 'product_name'},
