@@ -36,6 +36,17 @@
                                 <th width="15%"><i class="fa fa-cog"></i></th>
                             </tr>
                         </thead>
+                        {{-- <tbody>
+                            @forelse ($products as $product)
+                            <tr>
+                                <td class="text-center"><img
+                                    src="{{ $user->user_image ? asset('storage/img/user/' . $user->user_image) : 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/774354/settings_images/Xco28EgLSlixesEbQzJx_Avatar3.png' }}"
+                                    class="img-fluid" style="border-radius: 50%;" width="70" height="70">
+                                </td>
+                            </tr>
+
+                            @endforelse
+                        </tbody> --}}
                     </table>
                 </form>
             </div>
@@ -66,9 +77,8 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        // return data ? `<img src="{{ asset('storage') }}/${data}" alt="Product Image" style="max-height: 50px;">` : '';
-                        return data ? '<img src="{{ asset('storage') }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '';
-                    }
+                        return data ? '<img src="{{ asset("storage") }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '<img src="https://jkfenner.com/wp-content/uploads/2019/11/default.jpg" alt="Default Image" style="max-height: 50px;">';
+                    },
                 },
                 {data: 'product_name'},
                 {data: 'category_name'},
@@ -81,35 +91,64 @@
             ]
         });
 
+        // Ensure CSRF token is included in all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         $('#product-form').validator().on('submit', function (e) {
             if (!e.isDefaultPrevented()) {
-                let url = $('#product-form').attr('action');
-                let method = $('#product-form [name=_method]').val() === 'PUT' ? 'PUT' : 'POST';
-                let formData = new FormData($('#product-form')[0]);
+                let url = $(this).attr('action');
+                let method = $(this).find('[name=_method]').val() === 'PUT' ? 'PUT' : 'POST';
+                
+                // Create FormData object and append necessary fields
+                let formData = new FormData(this);
+                formData.append('_method', method); // Ensure _method is set correctly
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // CSRF token
+                
                 $.ajax({
                     url: url,
-                    type: method,
+                    type: 'POST', // Always use POST for FormData
                     data: formData,
-                    contentType: false,
-                    processData: false,
+                    contentType: false, // No need to set contentType when FormData is used
+                    processData: false, // No need to process data when FormData is used
                     success: function (response) {
                         $('#modal-form').modal('hide');
                         $('#product-form')[0].reset();
-                        location.reload();
                         table.ajax.reload();
                     },
                     error: function (xhr) {
-                        alert('Unable to save data');
-                        return;
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            let errors = xhr.responseJSON.errors;
+                            for (let field in errors) {
+                                let errorMessages = errors[field];
+                                alert(field + ": " + errorMessages.join(", "));
+                            }
+                        } else {
+                            alert('Unable to save data');
+                        }
                     }
                 });
+
                 return false;
             }
         });
 
+        // $('#modal-form').on('hidden.bs.modal', function () {
+        //     $('#image-preview').hide().attr('src', '');
+        //     $('#product-form')[0].reset();
+        //     $('#product-form [name=_method]').val('POST');
+        //     $('#product-form').attr('action', '');
+        // });
         $('#modal-form').on('hidden.bs.modal', function () {
-            $('#image-preview').hide().attr('src', '');
+            $('#image-preview').hide().attr('src', 'https://jkfenner.com/wp-content/uploads/2019/11/default.jpg');
+            $('#product-form')[0].reset();
+            $('#product-form [name=_method]').val('POST');
+            $('#product-form').attr('action', '');
         });
+
 
         $('[name=select_all]').on('click', function () {
             $(':checkbox').prop('checked', this.checked);
@@ -119,21 +158,18 @@
     function addForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Add Product');
-
         $('#product-form')[0].reset();
         $('#product-form').attr('action', url);
         $('#product-form [name=_method]').val('POST');
         $('#product_name').focus();
+        $('#image-preview').hide().attr('src', '');
     }
 
     function editForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Edit Product');
-
-        // $('#product-form')[0].reset();
         $('#product-form').attr('action', url);
-        $('#product-form [name=_method]').val('PUT');
-        $('#product_name').focus();
+        $('#product-form [name=_method]').val('PUT'); // Ensure _method is set to PUT
 
         $.get(url)
             .done(function (response) {
@@ -144,16 +180,27 @@
                 $('#selling_price').val(response.selling_price);
                 $('#discount').val(response.discount);
                 $('#stock').val(response.stock);
+
+                // Display product image if available
+                // if (response.product_image) {
+                //     $('#image-preview').attr('src', '{{ asset('storage') }}/' + response.product_image).show();
+                // } else {
+                //     $('#image-preview').hide().attr('src', '');
+                // }
+
                 if (response.product_image) {
-                    $('#image-preview').attr('src', '{{ asset('storage') }}/' + response.product_image).show();
+                    $('#image-preview').attr('src', '{{ asset("storage") }}/' + response.product_image).show();
+                } else {
+                    $('#image-preview').attr('src', 'https://jkfenner.com/wp-content/uploads/2019/11/default.jpg').show();
                 }
             })
-
-            .fail(function (errors) {
+            .fail(function (xhr, status, error) {
+                console.error('Error fetching data:', error);
                 alert('Unable to display data');
-                return;
             });
     }
+
+
 
     function deleteData(url) {
         if (confirm('Are you sure you want to delete selected data?')) {
@@ -163,10 +210,9 @@
                 })
                 .done((response) => {
                     table.ajax.reload();
-                    location.reload();
                 })
                 .fail((errors) => {
-                    alert('Unable to delete data');
+                    alert('Cannot delete data');
                     return;
                 });
         }
@@ -176,18 +222,17 @@
         if ($('input:checked').length > 0) {
             if (confirm('Are you sure you want to delete the selected data?')) {
                 $.post(url, $('.form-product').serialize())
-                    .done((response) => {
-                        table.ajax.reload();
-                        location.reload();
+                    .done(function(response) {
+                        console.log('Delete selected successful:', response);
+                        table.ajax.reload(null, false);  // Reload table without resetting pagination
                     })
-                    .fail((errors) => {
+                    .fail(function(errors) {
+                        console.error('Delete selected error:', errors);
                         alert('Unable to delete data');
-                        return;
                     });
             }
         } else {
             alert('Select data to delete');
-            return;
         }
     }
 

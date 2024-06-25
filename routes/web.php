@@ -44,5 +44,6 @@ Route::get('/customer/data', [CustomerController::class, 'data'])->name('custome
 Route::resource('/customer', CustomerController::class);
 
 Route::get('/products/data', [ProductController::class, 'data'])->name('products.data');
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 Route::post('/products/delete-selected', [ProductController::class, 'deleteSelected'])->name('products.delete_selected');
 Route::resource('/products', ProductController::class);
