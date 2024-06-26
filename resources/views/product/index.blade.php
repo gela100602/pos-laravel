@@ -66,7 +66,7 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? '<img src="' + '{{ asset('storage') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
+                        return data ? '<img src="{{ asset('storage/product_image') }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '<img src="{{ asset('storage/product_image/default-item.png') }}" alt="Default Image" style="max-height: 50px;">';
                     },
                 },
                 {data: 'product_name'},

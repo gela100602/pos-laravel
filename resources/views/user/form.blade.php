@@ -7,6 +7,8 @@
             </div>
             <form id="user-form" action="" method="post" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_method" value="PUT">
+                
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="name" class="control-label">Name</label>
@@ -14,6 +16,12 @@
                         <span class="help-block with-errors"></span>
                     </div>
                     
+                    <div class="form-group">
+                        <label for="username" class="control-label">Usernamme</label>
+                        <input type="text" class="form-control" id="username" name="username" autofocus>
+                        <span class="help-block with-errors"></span>
+                    </div>
+
                     <!-- Gender -->
                     <div class="form-group row">
                         <label for="gender_id" class="col-lg-2 col-lg-offset-1 control-label">Gender</label>
@@ -32,7 +40,7 @@
                     <div class="form-group row">
                         <label for="role_id" class="col-lg-2 col-lg-offset-1 control-label">Role</label>
                         <div class="col-lg-6">
-                            <select name="gender_id" id="gender_id" class="form-control" required>
+                            <select name="role_id" id="role_id" class="form-control" required>
                                 <option value="">Select Role</option>
                                 @foreach ($roles as $id => $role)
                                     <option value="{{ $id }}">{{ $role }}</option>
@@ -54,7 +62,6 @@
                         <label for="password" class="col-lg-3 col-lg-offset-1 control-label">Password</label>
                         <div class="col-lg-6">
                             <input type="password" name="password" id="password" class="form-control" 
-                            required
                             minlength="6">
                             <span class="help-block with-errors"></span>
                         </div>
@@ -64,7 +71,6 @@
                         <label for="password_confirmation" class="col-lg-3 col-lg-offset-1 control-label">Confirm Password</label>
                         <div class="col-lg-6">
                             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" 
-                                required
                                 data-match="#password">
                             <span class="help-block with-errors"></span>
                         </div>

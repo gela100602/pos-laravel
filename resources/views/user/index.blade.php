@@ -61,11 +61,11 @@
                 {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {
-                    data: 'product_image',
+                    data: 'user_image',
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? '<img src="' + '{{ asset('storage') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
+                        return data ? '<img src="' + '{{ asset('storage/user_image') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
                     },
                 },
                 {data: 'name'},
@@ -124,7 +124,7 @@
         });
 
         $('#modal-form').on('hidden.bs.modal', function () {
-            $('#image-preview').hide().attr('src', '{{ asset("img/user.png") }}');
+            $('#image-preview').hide().attr('src', '{{ asset("storage/user_image/default-user.png") }}');
             $('#user-form')[0].reset();
             $('#user-form [name=_method]').val('POST');
             $('#user-form').attr('action', '');
@@ -152,20 +152,19 @@
         $.get(url)
             .done(function (response) {
                 $('#name').val(response.name);
-                $('#gender').val(response.gender);
-                $('#role').val(response.role);
+                $('#gender_id').val(response.gender_id);
+                $('#role_id').val(response.role_id);
                 $('#email').val(response.email);
                 $('#username').val(response.username);
                 $('#contact_number').val(response.contact_number);
 
                 if (response.user_image) {
-                    $('#image-preview').attr('src', '{{ asset("storage") }}/' + response.user_image).show();
+                    $('#image-preview').attr('src', '{{ asset("storage/user_image") }}/' + response.user_image).show();
                 } else {
-                    $('#image-preview').attr('src', '{{ asset("img/user.png") }}').show();
+                    $('#image-preview').attr('src', '{{ asset("storage/user_image/default-user.png") }}').show();
                 }
 
             })
-            
             .fail(function (xhr, status, error) {
                 console.error('Error fetching data:', error);
                 alert('Unable to display data');

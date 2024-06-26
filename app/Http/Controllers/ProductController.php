@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -36,7 +37,18 @@ class ProductController extends Controller
                 return $product->supplier->supplier_name;
             })
             ->addColumn('product_image', function ($product) {
-                return $product->product_image;
+
+                $productImagePath = public_path('storage/product_image/' . $product->product_image);
+                
+                // Check if the file exists in the public disk
+                if (file_exists($productImagePath)) {
+                    // File exists, return the image path
+                    return $product->product_image;
+                } else {
+                    // File does not exist, return the default image path or filename
+                    return 'default-item.png';
+                }                
+
             })
             ->addColumn('action', function ($product) {
                 return '<div class="btn-group">
@@ -68,10 +80,10 @@ class ProductController extends Controller
             $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
             $extension = $request->file('product_image')->getClientOriginalExtension();
             $filenameToStore = $filename . '_' . time() . '.' . $extension;
-            $request->file('product_image')->storeAs('public/img/product', $filenameToStore);
-            $validated['product_image'] = 'img/product' . $filenameToStore;
+            $request->file('product_image')->storeAs('public/product_image', $filenameToStore);
+            $validated['product_image'] = $filenameToStore;
         } else {
-            $validated['product_image'] = 'img/product.png';
+            $validated['product_image'] = 'default-item.png';
         }
 
         Product::create($validated);
@@ -83,7 +95,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        $product->product_image_url = asset('storage/' . $product->product_image);
+        $product->product_image_url = asset('storage/product_image/' . $product->product_image);
 
         return response()->json($product);
     }
@@ -101,6 +113,7 @@ class ProductController extends Controller
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // Ensure discount is set to 0 if not provided
         $validatedData['discount'] = $request->input('discount', 0);
 
         if ($request->hasFile('product_image')) {
@@ -108,17 +121,23 @@ class ProductController extends Controller
             $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
             $extension = $request->file('product_image')->getClientOriginalExtension();
             $filenameToStore = $filename . '_' . time() . '.' . $extension;
-            $request->file('product_image')->storeAs('public/img/product', $filenameToStore);
-            $validated['product_image'] = 'img/product' . $filenameToStore;
-        } else {
-            $validated['product_image'] = 'img/product.png';
+            
+            $request->file('product_image')->storeAs('public/product_image', $filenameToStore);
+            
+            $validatedData['product_image'] = $filenameToStore;
+        }
+        else {
+            $validatedData['product_image'] = $product->product_image;
         }
 
+        // Update the product with validated data
         $product->update($validatedData);
 
+        // Return a JSON response for API or redirect to index page
         return response()->json(['message' => 'Product updated successfully']);
         return redirect()->route('products.index');
     }
+
 
 
     public function destroy($id)
