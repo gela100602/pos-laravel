@@ -16,7 +16,7 @@
                     <button onclick="addForm('{{ route('products.store') }}')" class="btn btn-success btn-flat"><i class="fa fa-plus-circle"></i> Add New Product</button>
                     <button onclick="deleteSelected('{{ route('products.delete_selected') }}')" class="btn btn-danger btn-flat"><i class="fa fa-trash"></i> Delete</button>
                 </div>
-            </div>  
+            </div>
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-product">
                     @csrf
@@ -36,17 +36,6 @@
                                 <th width="15%"><i class="fa fa-cog"></i></th>
                             </tr>
                         </thead>
-                        {{-- <tbody>
-                            @forelse ($products as $product)
-                            <tr>
-                                <td class="text-center"><img
-                                    src="{{ $user->user_image ? asset('storage/img/user/' . $user->user_image) : 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/774354/settings_images/Xco28EgLSlixesEbQzJx_Avatar3.png' }}"
-                                    class="img-fluid" style="border-radius: 50%;" width="70" height="70">
-                                </td>
-                            </tr>
-
-                            @endforelse
-                        </tbody> --}}
                     </table>
                 </form>
             </div>
@@ -105,15 +94,15 @@
                 
                 // Create FormData object and append necessary fields
                 let formData = new FormData(this);
-                formData.append('_method', method); // Ensure _method is set correctly
-                formData.append('_token', $('meta[name="csrf-token"]').attr('content')); // CSRF token
+                formData.append('_method', method);
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
                 
                 $.ajax({
                     url: url,
-                    type: 'POST', // Always use POST for FormData
+                    type: 'POST',
                     data: formData,
-                    contentType: false, // No need to set contentType when FormData is used
-                    processData: false, // No need to process data when FormData is used
+                    contentType: false,
+                    processData: false,
                     success: function (response) {
                         $('#modal-form').modal('hide');
                         $('#product-form')[0].reset();
@@ -136,12 +125,6 @@
             }
         });
 
-        // $('#modal-form').on('hidden.bs.modal', function () {
-        //     $('#image-preview').hide().attr('src', '');
-        //     $('#product-form')[0].reset();
-        //     $('#product-form [name=_method]').val('POST');
-        //     $('#product-form').attr('action', '');
-        // });
         $('#modal-form').on('hidden.bs.modal', function () {
             $('#image-preview').hide().attr('src', 'https://jkfenner.com/wp-content/uploads/2019/11/default.jpg');
             $('#product-form')[0].reset();
@@ -181,13 +164,6 @@
                 $('#discount').val(response.discount);
                 $('#stock').val(response.stock);
 
-                // Display product image if available
-                // if (response.product_image) {
-                //     $('#image-preview').attr('src', '{{ asset('storage') }}/' + response.product_image).show();
-                // } else {
-                //     $('#image-preview').hide().attr('src', '');
-                // }
-
                 if (response.product_image) {
                     $('#image-preview').attr('src', '{{ asset("storage") }}/' + response.product_image).show();
                 } else {
@@ -224,7 +200,7 @@
                 $.post(url, $('.form-product').serialize())
                     .done(function(response) {
                         console.log('Delete selected successful:', response);
-                        table.ajax.reload(null, false);  // Reload table without resetting pagination
+                        table.ajax.reload(null, false);
                     })
                     .fail(function(errors) {
                         console.error('Delete selected error:', errors);

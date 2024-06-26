@@ -105,31 +105,19 @@ class ProductController extends Controller
 
         $validated['discount'] = $request->input('discount', 0);
 
-        // if ($request->hasFile('product_image')) {
-        //     $filenameWithExtension = $request->file('product_image')->getClientOriginalName();
-        //     $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
-        //     $extension = $request->file('product_image')->getClientOriginalExtension();
-        //     $filenameToStore = $filename . '_' . time() . '.' . $extension;
-        //     $request->file('product_image')->storeAs('public/img/product', $filenameToStore);
-        //     $validated['product_image'] = 'img/product/' . $filenameToStore;
-        // } else {
-        //     // Retain the current image if no new image is uploaded
-        //     $validated['product_image'] = $product->product_image;
-        // }
-
         if ($request->hasFile('product_image')) {
             $image = $request->file('product_image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $path = $request->file('product_image')->storeAs('public', $imageName);
             $validated['product_image'] = $imageName;
         } else {
-            $validated['product_image'] = null; // Or handle default image here
+            $validated['product_image'] = null;
         }
 
         $product->update($validated);
 
         return response()->json(['message' => 'Product updated successfully']);
-        // Validate request data
+       
         $validatedData = $request->validate([
             'product_name' => 'required',
             'category_id' => 'required',
@@ -140,7 +128,7 @@ class ProductController extends Controller
             // Add other validation rules as needed
         ]);
 
-        // Update product
+        
         $product->update($validatedData);
 
         return response()->json(['message' => 'Product updated successfully']);
@@ -155,19 +143,6 @@ class ProductController extends Controller
 
         return response(null, 204);
     }
-
-    // public function deleteSelected(Request $request)
-    // {
-    //     $selectedIds = $request->product_id;
-
-    //     if (!empty($selectedIds)) {
-    //         Product::whereIn('id', $selectedIds)->delete();
-    //         return response()->json(['message' => 'Selected products deleted successfully'], 200);
-    //         return redirect('/products');
-    //     } else {
-    //         return response()->json(['error' => 'No products selected'], 400);
-    //     }
-    // }
 
     public function deleteSelected(Request $request)
     {
