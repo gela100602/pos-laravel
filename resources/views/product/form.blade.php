@@ -90,7 +90,7 @@
                         <div class="col-lg-6">
                             <input type="file" name="product_image" id="product_image" class="form-control">
                             <span class="help-block with-errors"></span>
-                            <img id="image-preview" style="max-height: 150px; display: none;">
+                            <img id="image-preview" src="" alt="Image Preview" style="max-height: 150px; display: none;">
                         </div>
                     </div>
 

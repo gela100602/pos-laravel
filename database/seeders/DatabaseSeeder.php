@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin',
             'password' => Hash::make('123'),
             'contact_number' => '123-456-7890',
-            'user_image' => 'img/user.png',
+            'user_image' => 'user_image/default-user.png',
         ]);
 
         // Example: Create more users using factories

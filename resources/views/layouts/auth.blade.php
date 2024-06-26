@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>PENCILINES - Log in</title>
+    <title>POS - Log in</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-    <link rel="icon" href="{{ url($setting->path_logo) }}" type="image/png">
+    {{-- <img src="{{ asset('img/logo.png') }}" alt="Logo"> --}}
 
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ asset('AdminLTE-2/bower_components/bootstrap/dist/css/bootstrap.min.css') }}">

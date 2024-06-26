@@ -61,11 +61,11 @@
                 {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {
-                    data: 'product_image',
+                    data: 'user_image',
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? '<img src="' + '{{ asset('storage') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
+                        return data ? '<img src="{{ asset('storage/user_image') }}/' + data + '" alt="User Image" style="max-height: 50px;">' : '<img src="{{ asset('storage/user_image/default-user.png') }}" alt="Default Image" style="max-height: 50px;">';
                     },
                 },
                 {data: 'name'},
@@ -124,7 +124,7 @@
         });
 
         $('#modal-form').on('hidden.bs.modal', function () {
-            $('#image-preview').hide().attr('src', '{{ asset("img/user.png") }}');
+            $('#image-preview').hide().attr('src', '');
             $('#user-form')[0].reset();
             $('#user-form [name=_method]').val('POST');
             $('#user-form').attr('action', '');
@@ -132,6 +132,10 @@
 
         $('[name=select_all]').on('click', function () {
             $(':checkbox').prop('checked', this.checked);
+        });
+
+        $('#user_image').change(function () {
+            readURL(this);
         });
     });
 
@@ -141,31 +145,31 @@
         $('#user-form')[0].reset();
         $('#user-form').attr('action', url);
         $('#user-form [name=_method]').val('POST');
+        $('#name').focus();
+        $('#image-preview').hide().attr('src', '');
     }
 
     function editForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Edit User');
         $('#user-form').attr('action', url);
-        $('#user-form [name=_method]').val('PUT'); // Ensure _method is set to PUT
+        $('#user-form [name=_method]').val('PUT');
 
         $.get(url)
             .done(function (response) {
                 $('#name').val(response.name);
-                $('#gender').val(response.gender);
-                $('#role').val(response.role);
+                $('#gender_id').val(response.gender_id);
+                $('#role_id').val(response.role_id);
                 $('#email').val(response.email);
                 $('#username').val(response.username);
                 $('#contact_number').val(response.contact_number);
-
-                if (response.user_image) {
-                    $('#image-preview').attr('src', '{{ asset("storage") }}/' + response.user_image).show();
+                if(response.user_image) {
+                    $('#image-preview').show().attr('src', '{{ asset('storage/user_image') }}/' + response.user_image);
                 } else {
-                    $('#image-preview').attr('src', '{{ asset("img/user.png") }}').show();
+                    $('#image-preview').show().attr('src', '{{ asset('storage/user_image/default-user.png') }}');
                 }
-
+                
             })
-            
             .fail(function (xhr, status, error) {
                 console.error('Error fetching data:', error);
                 alert('Unable to display data');
@@ -218,6 +222,18 @@
                     alert('Unable to delete selected users');
                 }
             });
+        }
+    }
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#image-preview').show().attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
         }
     }
 </script>

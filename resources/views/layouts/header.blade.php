@@ -19,28 +19,24 @@
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="" class="user-image img-profil"
-                            alt="User Image">
-                        <span class="hidden-xs">username</span>
+                        <img src="{{ asset('storage/user_image/default-user.png') }}" class="user-image img-profile" alt="User Image">
+                        <span class="hidden-xs">{{ auth()->user()->name }}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="{{ asset('img/logo.png') }}" class="img-circle img-profil"
-                                alt="User Image">
-
+                            <img src="{{ asset('storage/user_image/default-user.png') }}" class="img-circle img-profile" alt="User Image">
                             <p>
-                                user email
+                                {{ auth()->user()->name }} - {{ auth()->user()->email }}
                             </p>
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="   " class="btn btn-primary btn-flat">My Profile</a>
-                            </div>
-                            <div class="pull-right">
+                            <div class="text-center">
                                 <a href="#" class="btn btn-danger btn-flat"
-                                    onclick="   "><i class="fa fa-power-off"></i> Logout</a>
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fa fa-power-off"></i> Logout
+                                </a>
                             </div>
                         </li>
                     </ul>
@@ -50,6 +46,6 @@
     </nav>
 </header>
 
-<form action=" " method="post" id="logout-form" style="display: none;">
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
     @csrf
 </form>

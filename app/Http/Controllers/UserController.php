@@ -36,7 +36,16 @@ class UserController extends Controller
                 return $user->gender ? $user->gender->gender_name : '-';
             })
             ->addColumn('user_image', function (User $user) {
-                return $user->user_image;
+
+                $userImagePath = public_path('storage/user_image/' . $user->user_image);
+                
+                if (file_exists($userImagePath)) {
+
+                    return $user->user_image;
+                } else { 
+                    return 'default-user.png';
+                }       
+
             })
             ->addColumn('action', function ($user) {
                 return '<div class="btn-group">
@@ -68,10 +77,10 @@ class UserController extends Controller
             $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
             $extension = $request->file('user_image')->getClientOriginalExtension();
             $filenameToStore = $filename . '_' . time() . '.' . $extension;
-            $request->file('user_image')->storeAs('public/img/user', $filenameToStore);
-            $validated['user_image'] = 'img/user/' . $filenameToStore;
+            $request->file('user_image')->storeAs('public/user_image', $filenameToStore);
+            $validated['user_image'] = $filenameToStore;
         } else {
-            $validated['user_image'] = 'img/user.png';
+            $validated['user_image'] = 'default-user.png';
         }
         
         User::create($validated);
@@ -82,7 +91,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        $user->user_image_url = asset('storage/' . $user->user_image);
+        $user->user_image_url = asset('storage/user_image/' . $user->user_image);
 
         return response()->json($user);
     }
@@ -106,20 +115,44 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
+        // if ($request->hasFile('user_image')) {
+        //     $image = $request->file('user_image');
+        //     $imageName = time() . '.' . $image->getClientOriginalExtension();
+            
+        //     // Store the image in the storage/app/public directory
+        //     $path = $request->file('user_image')->storeAs('public/user_image', $imageName);
+            
+        //     // Update the validated data with the new image name
+        //     $validated['user_image'] = $imageName;
+        // } else {
+        //     // If no new image is uploaded, keep the existing image path
+        //     $validated['user_image'] = $user->user_image; 
+        // }
+
         if ($request->hasFile('user_image')) {
-            $image = $request->file('user_image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $path = $request->file('user_image')->storeAs('public', $imageName);
-            $validated['user_image'] = $imageName;
-        } else {
-            $validated['user_image'] = null;
+            $filenameWithExtension = $request->file('user_image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('user_image')->getClientOriginalExtension();
+            $filenameToStore = $filename . '_' . time() . '.' . $extension;
+            
+            $request->file('user_image')->storeAs('public/user_image', $filenameToStore);
+            
+            $validatedData['user_image'] = $filenameToStore;
+        }
+        else {
+            $validatedData['user_image'] = $user->user_image;
         }
 
         $user->update($validated);
 
-        return response()->json(['message' => 'User updated successfully']);
-        return redirect()->route('users.index');
+        // Return appropriate response based on request type (JSON or redirect)
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'User updated successfully']);
+        } else {
+            return redirect()->route('users.index');
+        }
     }
+
 
     public function destroy($id)
     {

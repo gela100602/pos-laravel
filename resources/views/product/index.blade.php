@@ -66,7 +66,7 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? '<img src="' + '{{ asset('storage') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
+                        return data ? '<img src="{{ asset('storage/product_image') }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '<img src="{{ asset('storage/product_image/default-item.png') }}" alt="Default Image" style="max-height: 50px;">';
                     },
                 },
                 {data: 'product_name'},
@@ -126,7 +126,7 @@
         });
 
         $('#modal-form').on('hidden.bs.modal', function () {
-            $('#image-preview').hide().attr('src', '{{ asset("img/product.png") }}');
+            $('#image-preview').hide().attr('src');
             $('#user-form')[0].reset();
             $('#user-form [name=_method]').val('POST');
             $('#user-form').attr('action', '');
@@ -164,21 +164,17 @@
                 $('#discount').val(response.discount);
                 $('#stock').val(response.stock);
 
-                if (response.user_image) {
-                    $('#image-preview').attr('src', '{{ asset("storage") }}/' + response.product_image).show();
-                } 
-                else {
-                    $('#image-preview').attr('src', '{{ asset("img/product.png") }}').show();
+                if (response.product_image) {
+                    $('#image-preview').attr('src', '{{ asset('storage/product_image') }}/' + response.product_image).show();
+                } else {
+                    $('#image-preview').attr('src', '{{ asset('storage/product_image/default-item.png') }}').show();
                 }
-
             })
             .fail(function (xhr, status, error) {
                 console.error('Error fetching data:', error);
                 alert('Unable to display data');
             });
     }
-
-
 
     function deleteData(url) {
         if (confirm('Are you sure you want to delete selected data?')) {
