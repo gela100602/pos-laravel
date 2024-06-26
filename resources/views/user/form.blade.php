@@ -15,6 +15,15 @@
                         <input type="text" class="form-control" id="name" name="name" required autofocus>
                         <span class="help-block with-errors"></span>
                     </div>
+<<<<<<< HEAD
+=======
+                    
+                    <div class="form-group">
+                        <label for="username" class="control-label">Usernamme</label>
+                        <input type="text" class="form-control" id="username" name="username" autofocus>
+                        <span class="help-block with-errors"></span>
+                    </div>
+>>>>>>> 1d4c1978a9217d8ffa25cf34cb56683233592e71
 
                     <!-- Gender -->
                     <div class="form-group">
@@ -29,8 +38,14 @@
                     </div>
 
                     <!-- Role -->
+<<<<<<< HEAD
                     <div class="form-group">
                         <label for="role_id" class="control-label">Role</label>
+=======
+                    <div class="form-group row">
+                        <label for="role_id" class="col-lg-2 col-lg-offset-1 control-label">Role</label>
+                        <div class="col-lg-6">
+>>>>>>> 1d4c1978a9217d8ffa25cf34cb56683233592e71
                             <select name="role_id" id="role_id" class="form-control" required>
                                 <option value="">Select Role</option>
                                 @foreach ($roles as $id => $role)
