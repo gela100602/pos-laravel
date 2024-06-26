@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -50,6 +51,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,category_id',
@@ -127,7 +129,24 @@ class ProductController extends Controller
         $product->update($validated);
 
         return response()->json(['message' => 'Product updated successfully']);
+        // Validate request data
+        $validatedData = $request->validate([
+            'product_name' => 'required',
+            'category_id' => 'required',
+            'supplier_id' => 'required',
+            'purchase_price' => 'required',
+            'selling_price' => 'required',
+            'stock' => 'required',
+            // Add other validation rules as needed
+        ]);
+
+        // Update product
+        $product->update($validatedData);
+
+        return response()->json(['message' => 'Product updated successfully']);
+        return redirect()->route('products.index');
     }
+
 
     public function destroy($id)
     {
@@ -152,12 +171,15 @@ class ProductController extends Controller
 
     public function deleteSelected(Request $request)
     {
-        foreach ($request->product_id as $id) {
-            $product = Product::find($id);
-            $product->delete();
-        }
+        $selectedIds = $request->product_id;
 
-        return response(null, 204);
+        if (!empty($selectedIds)) {
+            Product::whereIn('id', $selectedIds)->delete();
+            return response()->json(['message' => 'Selected products deleted successfully'], 200);
+            return redirect('/products');
+        } else {
+            return response()->json(['error' => 'No products selected'], 400);
+        }
     }
 
 }

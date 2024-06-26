@@ -77,7 +77,7 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? html(`<img src="{{ asset("storage") }}/' + data + '" alt="Product Image" style="max-height: 50px;">` : `<img src="https://jkfenner.com/wp-content/uploads/2019/11/default.jpg" alt="Default Image" style="max-height: 50px;">`);
+                        return data ? '<img src="{{ asset("storage") }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '<img src="https://jkfenner.com/wp-content/uploads/2019/11/default.jpg" alt="Default Image" style="max-height: 50px;">';
                     },
                 },
                 {data: 'product_name'},
