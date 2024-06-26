@@ -66,7 +66,7 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-                        return data ? '<img src="{{ asset("storage") }}/' + data + '" alt="Product Image" style="max-height: 50px;">' : '<img src="https://jkfenner.com/wp-content/uploads/2019/11/default.jpg" alt="Default Image" style="max-height: 50px;">';
+                        return data ? '<img src="' + '{{ asset('storage') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
                     },
                 },
                 {data: 'product_name'},
@@ -126,10 +126,10 @@
         });
 
         $('#modal-form').on('hidden.bs.modal', function () {
-            $('#image-preview').hide().attr('src', 'https://jkfenner.com/wp-content/uploads/2019/11/default.jpg');
-            $('#product-form')[0].reset();
-            $('#product-form [name=_method]').val('POST');
-            $('#product-form').attr('action', '');
+            $('#image-preview').hide().attr('src', '{{ asset("img/product.png") }}');
+            $('#user-form')[0].reset();
+            $('#user-form [name=_method]').val('POST');
+            $('#user-form').attr('action', '');
         });
 
 
@@ -152,7 +152,7 @@
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Edit Product');
         $('#product-form').attr('action', url);
-        $('#product-form [name=_method]').val('PUT'); // Ensure _method is set to PUT
+        $('#product-form [name=_method]').val('PUT');
 
         $.get(url)
             .done(function (response) {
@@ -164,11 +164,13 @@
                 $('#discount').val(response.discount);
                 $('#stock').val(response.stock);
 
-                if (response.product_image) {
+                if (response.user_image) {
                     $('#image-preview').attr('src', '{{ asset("storage") }}/' + response.product_image).show();
-                } else {
-                    $('#image-preview').attr('src', 'https://jkfenner.com/wp-content/uploads/2019/11/default.jpg').show();
+                } 
+                else {
+                    $('#image-preview').attr('src', '{{ asset("img/product.png") }}').show();
                 }
+
             })
             .fail(function (xhr, status, error) {
                 console.error('Error fetching data:', error);

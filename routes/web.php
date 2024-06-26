@@ -8,6 +8,7 @@ use App\Http\Controllers\{
     SupplierController,
     CustomerController,
     ProductController,
+    UserController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -47,3 +48,8 @@ Route::get('/products/data', [ProductController::class, 'data'])->name('products
 Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 Route::post('/products/delete-selected', [ProductController::class, 'deleteSelected'])->name('products.delete_selected');
 Route::resource('/products', ProductController::class); 
+
+Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
+Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+Route::post('/users/delete-selected', [UserController::class, 'deleteSelected'])->name('users.delete_selected');
+Route::resource('/users', UserController::class);

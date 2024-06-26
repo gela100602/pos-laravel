@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -37,7 +36,7 @@ class ProductController extends Controller
                 return $product->supplier->supplier_name;
             })
             ->addColumn('product_image', function ($product) {
-                return '<img src="' . asset('storage/' . $product->product_image) . '" height="50">';
+                return $product->product_image;
             })
             ->addColumn('action', function ($product) {
                 return '<div class="btn-group">
@@ -51,7 +50,6 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'product_name' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,category_id',
@@ -71,7 +69,7 @@ class ProductController extends Controller
             $extension = $request->file('product_image')->getClientOriginalExtension();
             $filenameToStore = $filename . '_' . time() . '.' . $extension;
             $request->file('product_image')->storeAs('public/img/product', $filenameToStore);
-            $validated['product_image'] = 'img/product/' . $filenameToStore;
+            $validated['product_image'] = 'img/product' . $filenameToStore;
         } else {
             $validated['product_image'] = 'img/product.png';
         }
@@ -92,7 +90,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'product_name' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,category_id',
             'supplier_id' => 'required|integer|exists:suppliers,supplier_id',
@@ -103,32 +101,19 @@ class ProductController extends Controller
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $validated['discount'] = $request->input('discount', 0);
+        $validatedData['discount'] = $request->input('discount', 0);
 
         if ($request->hasFile('product_image')) {
-            $image = $request->file('product_image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $path = $request->file('product_image')->storeAs('public', $imageName);
-            $validated['product_image'] = $imageName;
+            $filenameWithExtension = $request->file('product_image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('product_image')->getClientOriginalExtension();
+            $filenameToStore = $filename . '_' . time() . '.' . $extension;
+            $request->file('product_image')->storeAs('public/img/product', $filenameToStore);
+            $validated['product_image'] = 'img/product' . $filenameToStore;
         } else {
-            $validated['product_image'] = null;
+            $validated['product_image'] = 'img/product.png';
         }
 
-        $product->update($validated);
-
-        return response()->json(['message' => 'Product updated successfully']);
-       
-        $validatedData = $request->validate([
-            'product_name' => 'required',
-            'category_id' => 'required',
-            'supplier_id' => 'required',
-            'purchase_price' => 'required',
-            'selling_price' => 'required',
-            'stock' => 'required',
-            // Add other validation rules as needed
-        ]);
-
-        
         $product->update($validatedData);
 
         return response()->json(['message' => 'Product updated successfully']);
@@ -141,7 +126,7 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->delete();
 
-        return response(null, 204);
+        return response()->json(['message' => 'User deleted successfully']);
     }
 
     public function deleteSelected(Request $request)
@@ -149,7 +134,7 @@ class ProductController extends Controller
         $selectedIds = $request->product_id;
 
         if (!empty($selectedIds)) {
-            Product::whereIn('id', $selectedIds)->delete();
+            Product::whereIn('product_id', $selectedIds)->delete();
             return response()->json(['message' => 'Selected products deleted successfully'], 200);
             return redirect('/products');
         } else {
