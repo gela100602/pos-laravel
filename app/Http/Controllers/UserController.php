@@ -130,8 +130,7 @@ class UserController extends Controller
         // }
 
         if ($request->hasFile('user_image')) {
-<<<<<<< HEAD
-            $filenameWithExtension = $request->file('user_image')->getClientOriginalName();
+            $filenameWithExtension = $request->file('user_image');
             $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
             $extension = $request->file('user_image')->getClientOriginalExtension();
             $filenameToStore = $filename . '_' . time() . '.' . $extension;
@@ -142,19 +141,6 @@ class UserController extends Controller
         }
         else {
             $validatedData['user_image'] = $user->user_image;
-=======
-            $image = $request->file('user_image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            
-            // Store the image in the storage/app/public directory
-            $path = $request->file('user_image')->storeAs('public/user_image', $imageName);
-            
-            // Update the validated data with the new image name
-            $validated['user_image'] = $imageName;
-        } else {
-            // If no new image is uploaded, keep the existing image path
-            $validated['user_image'] = $user->user_image; 
->>>>>>> 1d4c1978a9217d8ffa25cf34cb56683233592e71
         }
 
         $user->update($validated);
