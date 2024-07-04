@@ -7,8 +7,6 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-    {{-- <img src="{{ asset('img/logo.png') }}" alt="Logo"> --}}
-
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{ asset('AdminLTE-2/bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
     <!-- Font Awesome -->

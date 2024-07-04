@@ -1,4 +1,4 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,16 +30,12 @@
         @media print {
             @page {
                 margin: 0;
-                size: 75mm 
-    ';
-    ?>
-    <?php 
+                size: 75mm ';
     $style .= 
         ! empty($_COOKIE['innerHeight'])
             ? $_COOKIE['innerHeight'] .'mm; }'
             : '}';
-    ?>
-    <?php
+
     $style .= '
             html, body {
                 width: 70mm;
@@ -50,12 +46,11 @@
         }
     </style>
     ';
+    echo $style;
     ?>
-
-    {!! $style !!}
 </head>
 <body onload="window.print()">
-    <button class="btn-print" style="position: absolute; right: 1rem; top: rem;" onclick="window.print()">Print</button>
+    <button class="btn-print" style="position: absolute; right: 1rem; top: 1rem;" onclick="window.print()">Print</button>
     <div class="text-center">
         <h3 style="margin-bottom: 5px;">POS</h3>
         <p>Roxas City</p>
@@ -87,27 +82,27 @@
     <table width="100%" style="border: 0;">
         <tr>
             <td>Total Price:</td>
-            <td class="text-right">{{ format_uang($penjualan->total_harga) }}</td>
+            <td class="text-right">{{ format_money($sales->total_price) }}</td>
         </tr>
         <tr>
             <td>Total Item:</td>
-            <td class="text-right">{{ format_uang($penjualan->total_item) }}</td>
+            <td class="text-right">{{ format_money($sales->total_item) }}</td>
         </tr>
         <tr>
             <td>Discount:</td>
-            <td class="text-right">{{ format_uang($penjualan->diskon) }}</td>
+            <td class="text-right">{{ format_money($sales->discount) }}</td>
         </tr>
         <tr>
             <td>Total Pay:</td>
-            <td class="text-right">{{ format_uang($penjualan->bayar) }}</td>
+            <td class="text-right">{{ format_money($sales->pay) }}</td>
         </tr>
         <tr>
             <td>Received:</td>
-            <td class="text-right">{{ format_uang($penjualan->diterima) }}</td>
+            <td class="text-right">{{ format_money($sales->accepted) }}</td>
         </tr>
         <tr>
             <td>Return:</td>
-            <td class="text-right">{{ format_uang($penjualan->diterima - $penjualan->bayar) }}</td>
+            <td class="text-right">{{ format_money($sales->accepted - $sales->pay) }}</td>
         </tr>
     </table>
 
@@ -126,4 +121,4 @@
         document.cookie = "innerHeight="+ ((height + 50) * 0.264583);
     </script>
 </body>
-</html> --}}
+</html>

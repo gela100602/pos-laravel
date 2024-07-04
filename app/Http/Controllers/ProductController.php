@@ -10,18 +10,31 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::pluck('category_name', 'category_id');
         $suppliers = Supplier::pluck('supplier_name', 'supplier_id');
 
-        return view('product.index', compact('categories', 'suppliers'));
+        $products = Product::where('is_deleted', 0)->get();
+
+        return view('product.index', compact('products', 'categories', 'suppliers'));
     }
 
     public function data()
     {
         $products = Product::with('category', 'supplier')
-            ->select(['product_id', 'product_name', 'supplier_id', 'category_id', 'purchase_price', 'selling_price', 'discount', 'stock', 'product_image'])
+            ->where('is_deleted', 0)
+            ->select([
+                'product_id',
+                'product_name',
+                'supplier_id',
+                'category_id',
+                'purchase_price',
+                'selling_price',
+                'discount',
+                'stock',
+                'product_image'
+            ])
             ->get();
 
         return datatables()
@@ -53,7 +66,7 @@ class ProductController extends Controller
             ->addColumn('action', function ($product) {
                 return '<div class="btn-group">
                     <button type="button" onclick="editForm(`' . route('products.update', $product->product_id) . '`)" class="btn btn-xs btn-primary btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`' . route('products.destroy', $product->product_id) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                    <button type="button" onclick="deleteData(`' . route('products.markAsDeleted', $product->product_id) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>';
             })
             ->rawColumns(['select_all', 'category_name', 'supplier_name', 'product_image', 'action'])
@@ -138,27 +151,32 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-
-
-    public function destroy($id)
+    public function markAsDeleted($id)
     {
         $product = Product::find($id);
-        $product->delete();
-
-        return response()->json(['message' => 'User deleted successfully']);
+        if ($product) {
+            $product->is_deleted = 1;
+            if ($product->save()) {
+                return response()->json(['message' => 'Product marked as deleted successfully']);
+            } else {
+                return response()->json(['error' => 'Failed to update product'], 500);
+            }
+        } else {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
     }
-
+  
+    
     public function deleteSelected(Request $request)
     {
         $selectedIds = $request->product_id;
-
+    
         if (!empty($selectedIds)) {
-            Product::whereIn('product_id', $selectedIds)->delete();
-            return response()->json(['message' => 'Selected products deleted successfully'], 200);
-            return redirect('/products');
+            Product::whereIn('product_id', $selectedIds)->update(['is_deleted' => 1]);
+            return response()->json(['message' => 'Selected products marked as deleted successfully'], 200);
         } else {
             return response()->json(['error' => 'No products selected'], 400);
         }
     }
-
+    
 }

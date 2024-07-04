@@ -23,7 +23,7 @@
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th width="5%"><input type="checkbox" name="select_all" id="select_all"></th>
+                                {{-- <th width="5%"><input type="checkbox" name="select_all" id="select_all"></th> --}}
                                 <th width="5%">#</th>
                                 <th>Image</th>
                                 <th>Name</th>
@@ -59,7 +59,7 @@
                 url: '{{ route('products.data') }}',
             },
             columns: [
-                {data: 'select_all', searchable: false, sortable: false},
+                // {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {
                     data: 'product_image',
@@ -180,10 +180,10 @@
         if (confirm('Are you sure you want to delete selected data?')) {
             $.post(url, {
                     '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'delete'
+                    '_method': 'PATCH'
                 })
                 .done((response) => {
-                    table.ajax.reload();
+                    location.reload();
                 })
                 .fail((errors) => {
                     alert('Cannot delete data');
@@ -192,23 +192,23 @@
         }
     }
 
-    function deleteSelected(url) {
-        if ($('input:checked').length > 0) {
-            if (confirm('Are you sure you want to delete the selected data?')) {
-                $.post(url, $('.form-product').serialize())
-                    .done(function(response) {
-                        console.log('Delete selected successful:', response);
-                        table.ajax.reload(null, false);
-                    })
-                    .fail(function(errors) {
-                        console.error('Delete selected error:', errors);
-                        alert('Unable to delete data');
-                    });
-            }
-        } else {
-            alert('Select data to delete');
-        }
-    }
+    // function deleteSelected(url) {
+    //     if ($('input:checked').length > 0) {
+    //         if (confirm('Are you sure you want to delete the selected data?')) {
+    //             $.post(url, $('.form-product').serialize())
+    //                 .done(function(response) {
+    //                     console.log('Delete selected successful:', response);
+    //                     table.ajax.reload(null, false);
+    //                 })
+    //                 .fail(function(errors) {
+    //                     console.error('Delete selected error:', errors);
+    //                     alert('Unable to delete data');
+    //                 });
+    //         }
+    //     } else {
+    //         alert('Select data to delete');
+    //     }
+    // }
 
     $('#product_image').change(function () {
         let input = this;

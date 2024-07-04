@@ -115,20 +115,6 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
-        // if ($request->hasFile('user_image')) {
-        //     $image = $request->file('user_image');
-        //     $imageName = time() . '.' . $image->getClientOriginalExtension();
-            
-        //     // Store the image in the storage/app/public directory
-        //     $path = $request->file('user_image')->storeAs('public/user_image', $imageName);
-            
-        //     // Update the validated data with the new image name
-        //     $validated['user_image'] = $imageName;
-        // } else {
-        //     // If no new image is uploaded, keep the existing image path
-        //     $validated['user_image'] = $user->user_image; 
-        // }
-
         if ($request->hasFile('user_image')) {
             $filenameWithExtension = $request->file('user_image');
             $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);

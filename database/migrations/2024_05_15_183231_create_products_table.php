@@ -23,6 +23,7 @@ return new class extends Migration
             $table->tinyInteger('discount')->default(0)->nullable();
             $table->integer('stock');
             $table->string('product_image', 255)->nullable();
+            $table->boolean('is_deleted')->default(0);
             $table->timestamps();
 
             $table->foreign('category_id')

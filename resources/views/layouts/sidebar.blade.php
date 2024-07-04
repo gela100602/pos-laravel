@@ -5,10 +5,10 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="" class="img-circle img-profil" alt="User Image">
+                <img src="{{ asset('storage/user_image/default-user.png') }}" class="img-circle img-profile" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>username</p>
+                <p>{{ auth()->user()->name }}</p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
@@ -56,12 +56,12 @@
             </li>
             <li class="header">TRANSACTION</li>
             <li>
-                <a href="#">
+                <a href="{{ route('transaction.index') }}">
                     <i class="fa fa-exchange"></i> <span>Payment Transaction</span>
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="{{ route('transaction.index') }}">
                     <i class="fa fa-shopping-cart"></i> <span>Cart</span>
                 </a>
             </li>
