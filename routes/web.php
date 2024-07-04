@@ -37,8 +37,11 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
     Route::get('/products/data', [ProductController::class, 'data'])->name('products.data');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-    Route::post('/products/delete-selected', [ProductController::class, 'deleteSelected'])->name('products.delete_selected');
+    // Route::post('/products/delete-selected', [ProductController::class, 'deleteSelected'])->name('products.delete_selected');
     Route::resource('/products', ProductController::class);
+    Route::delete('products/{id}', [ProductController::class, 'delete'])->name('products.delete');
+    Route::get('products/restore/one/{id}', [ProductController::class, 'restore'])->name('products.restore');
+    Route::get('products/restore_all', [ProductController::class, 'restore_all'])->name('products.restore_all');
 
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');

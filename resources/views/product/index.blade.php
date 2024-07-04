@@ -14,7 +14,19 @@
             <div class="box-header with-border">
                 <div class="btn-group">
                     <button onclick="addForm('{{ route('products.store') }}')" class="btn btn-success btn-flat"><i class="fa fa-plus-circle"></i> Add New Product</button>
-                    <button onclick="deleteSelected('{{ route('products.delete_selected') }}')" class="btn btn-danger btn-flat"><i class="fa fa-trash"></i> Delete</button>
+                    {{-- <button onclick="deleteSelected('{{ route('products.delete_selected') }}')" class="btn btn-danger btn-flat"><i class="fa fa-trash"></i> Delete</button> --}}
+                    @if(request()->has('view_deleted'))
+                    <a href="{{ route('products.restore_all') }}" class="btn btn-primary btn-flat">
+                        <i class="fa fa-undo"></i> Restore All
+                    </a>
+
+                    @else
+                    <a href="{{ route('products.index', ['view_deleted' => 'DeletedRecords']) }}" class="btn btn-primary btn-flat">
+                        <i class="fa fa-trash"></i> View Deleted Products
+                    </a>
+
+                    @endif
+
                 </div>
             </div>
             <div class="box-body table-responsive">
@@ -23,7 +35,7 @@
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th width="5%"><input type="checkbox" name="select_all" id="select_all"></th>
+                                {{-- <th width="5%"><input type="checkbox" name="select_all" id="select_all"></th> --}}
                                 <th width="5%">#</th>
                                 <th>Image</th>
                                 <th>Name</th>
@@ -59,7 +71,7 @@
                 url: '{{ route('products.data') }}',
             },
             columns: [
-                {data: 'select_all', searchable: false, sortable: false},
+                // {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {
                     data: 'product_image',
@@ -192,23 +204,23 @@
         }
     }
 
-    function deleteSelected(url) {
-        if ($('input:checked').length > 0) {
-            if (confirm('Are you sure you want to delete the selected data?')) {
-                $.post(url, $('.form-product').serialize())
-                    .done(function(response) {
-                        console.log('Delete selected successful:', response);
-                        table.ajax.reload(null, false);
-                    })
-                    .fail(function(errors) {
-                        console.error('Delete selected error:', errors);
-                        alert('Unable to delete data');
-                    });
-            }
-        } else {
-            alert('Select data to delete');
-        }
-    }
+    // function deleteSelected(url) {
+    //     if ($('input:checked').length > 0) {
+    //         if (confirm('Are you sure you want to delete the selected data?')) {
+    //             $.post(url, $('.form-product').serialize())
+    //                 .done(function(response) {
+    //                     console.log('Delete selected successful:', response);
+    //                     table.ajax.reload(null, false);
+    //                 })
+    //                 .fail(function(errors) {
+    //                     console.error('Delete selected error:', errors);
+    //                     alert('Unable to delete data');
+    //                 });
+    //         }
+    //     } else {
+    //         alert('Select data to delete');
+    //     }
+    // }
 
     $('#product_image').change(function () {
         let input = this;

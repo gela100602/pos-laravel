@@ -10,12 +10,18 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::pluck('category_name', 'category_id');
         $suppliers = Supplier::pluck('supplier_name', 'supplier_id');
 
-        return view('product.index', compact('categories', 'suppliers'));
+        if ($request->has('view_deleted')) {
+            $products = Product::onlyTrashed()->get();
+        } else {
+            $products = Product::get();
+        }
+
+        return view('product.index', compact('products', 'categories', 'suppliers'));
     }
 
     public function data()
@@ -53,7 +59,7 @@ class ProductController extends Controller
             ->addColumn('action', function ($product) {
                 return '<div class="btn-group">
                     <button type="button" onclick="editForm(`' . route('products.update', $product->product_id) . '`)" class="btn btn-xs btn-primary btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`' . route('products.destroy', $product->product_id) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                    <button type="button" onclick="deleteData(`' . route('products.delete', $product->product_id) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>';
             })
             ->rawColumns(['select_all', 'category_name', 'supplier_name', 'product_image', 'action'])
@@ -138,27 +144,42 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-
-
-    public function destroy($id)
+    public function delete($id)
     {
         $product = Product::find($id);
         $product->delete();
 
-        return response()->json(['message' => 'User deleted successfully']);
+        return response()->json(['message' => 'Product deleted successfully']);
     }
 
-    public function deleteSelected(Request $request)
-    {
-        $selectedIds = $request->product_id;
+    // public function deleteSelected(Request $request)
+    // {
+    //     $selectedIds = $request->product_id;
 
-        if (!empty($selectedIds)) {
-            Product::whereIn('product_id', $selectedIds)->delete();
-            return response()->json(['message' => 'Selected products deleted successfully'], 200);
-            return redirect('/products');
-        } else {
-            return response()->json(['error' => 'No products selected'], 400);
-        }
+    //     if (!empty($selectedIds)) {
+    //         Product::whereIn('product_id', $selectedIds)->delete();
+    //         return response()->json(['message' => 'Selected products deleted successfully'], 200);
+    //         return redirect('/products');
+    //     } else {
+    //         return response()->json(['error' => 'No products selected'], 400);
+    //     }
+    // }
+
+    public function restore($id)
+    {
+        Product::withTrashed()->find($id)->restore();
+
+        // return back()->with('success', 'Product Restore successfully');
+        return response()->json(['message' => 'Product restored successfully']);
+
+    }
+
+    public function restore_all()
+    {
+        Product::onlyTrashed()->restore();
+
+        // return back()->with('success', 'All Product Restored successfully');
+        return response()->json(['message' => 'All products restored successfully']);
     }
 
 }
