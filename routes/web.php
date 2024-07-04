@@ -9,6 +9,8 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SalesController;
+use App\Http\Controllers\SalesDetailController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 
@@ -43,6 +45,18 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/users/delete-selected', [UserController::class, 'deleteSelected'])->name('users.delete_selected');
     Route::resource('/users', UserController::class);
 
+    Route::get('/transaction/new', [SalesController::class, 'create'])->name('transaction.new');
+    Route::post('/transaction/save', [SalesController::class, 'store'])->name('transaction.save');
+    Route::get('/transaction/complete', [SalesController::class, 'complete'])->name('transaction.complete');
+    Route::get('/transaction/small-receipt', [SalesController::class, 'smallReceipt'])->name('transaction.small_receipt');
+    Route::get('/transaction/large-receipt', [SalesController::class, 'largeReceipt'])->name('transaction.large_receipt');
+
+    Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
+    Route::get('/transaction/loadform/{discount}/{total}/{received}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
+    Route::resource('/transaction', SalesDetailController::class)
+    ->except('create', 'show', 'edit');
+
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
@@ -50,5 +64,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
 // Redirect root to login if not authenticated
 Route::get('/', function () {
+    
     return redirect()->route('login');
 })->name('index');

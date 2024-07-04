@@ -65,11 +65,8 @@
                     searchable: false,
                     sortable: false,
                     render: function(data, type, row) {
-<<<<<<< HEAD
                         return data ? '<img src="{{ asset('storage/user_image') }}/' + data + '" alt="User Image" style="max-height: 50px;">' : '<img src="{{ asset('storage/user_image/default-user.png') }}" alt="Default Image" style="max-height: 50px;">';
-=======
                         return data ? '<img src="' + '{{ asset('storage/user_image') }}/' + data + '" alt="Image Preview" style="border-radius: 50%; max-height: 50px;">' : '';
->>>>>>> 1d4c1978a9217d8ffa25cf34cb56683233592e71
                     },
                 },
                 {data: 'name'},
@@ -128,11 +125,8 @@
         });
 
         $('#modal-form').on('hidden.bs.modal', function () {
-<<<<<<< HEAD
             $('#image-preview').hide().attr('src', '');
-=======
             $('#image-preview').hide().attr('src', '{{ asset("storage/user_image/default-user.png") }}');
->>>>>>> 1d4c1978a9217d8ffa25cf34cb56683233592e71
             $('#user-form')[0].reset();
             $('#user-form [name=_method]').val('POST');
             $('#user-form').attr('action', '');
@@ -171,18 +165,11 @@
                 $('#email').val(response.email);
                 $('#username').val(response.username);
                 $('#contact_number').val(response.contact_number);
-<<<<<<< HEAD
+
                 if(response.user_image) {
                     $('#image-preview').show().attr('src', '{{ asset('storage/user_image') }}/' + response.user_image);
                 } else {
                     $('#image-preview').show().attr('src', '{{ asset('storage/user_image/default-user.png') }}');
-=======
-
-                if (response.user_image) {
-                    $('#image-preview').attr('src', '{{ asset("storage/user_image") }}/' + response.user_image).show();
-                } else {
-                    $('#image-preview').attr('src', '{{ asset("storage/user_image/default-user.png") }}').show();
->>>>>>> 1d4c1978a9217d8ffa25cf34cb56683233592e71
                 }
                 
             })
