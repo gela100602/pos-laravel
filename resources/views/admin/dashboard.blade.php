@@ -20,6 +20,7 @@
         <div class="small-box bg-primary">
             <div class="inner">
                 <h3>{{ $category }}</h3>
+                {{-- <h3>21</h3> --}}
                 <p>Total Categories</p>
             </div>
             <div class="icon">
@@ -33,6 +34,7 @@
         <div class="small-box bg-purple">
             <div class="inner">
                 <h3>{{ $product }}</h3>
+                {{-- <h3>21</h3> --}}
                 <p>Total Products</p>
             </div>
             <div class="icon">
@@ -46,6 +48,7 @@
         <div class="small-box bg-yellow">
             <div class="inner">
                 <h3>{{ $customer }}</h3>
+                {{-- <h3>21</h3> --}}
                 <p>Total Customers</p>
             </div>
             <div class="icon">
@@ -59,6 +62,7 @@
         <div class="small-box bg-olive">
             <div class="inner">
                 <h3>{{ $supplier }}</h3>
+                {{-- <h3>21</h3> --}}
                 <p>Total Suppliers</p>
             </div>
             <div class="icon">

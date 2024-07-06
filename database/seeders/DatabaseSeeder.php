@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        /* \App\Models\Product::factory(10)->create(); */
         // Seed individual tables
         $this->call(GenderSeeder::class);
         $this->call(RoleSeeder::class);
@@ -39,14 +40,14 @@ class DatabaseSeeder extends Seeder
     {
         // Admin User
         DB::table('users')->insert([
-            'role_id' => 1,
-            'gender_id' => rand(1, 3),
-            'name' => 'Angela Bartolo Arguelles',
-            'email' => 'angelaarguelles04@gmail.com',
-            'username' => 'admin',
-            'password' => Hash::make('123'),
-            'contact_number' => '123-456-7890',
-            'user_image' => 'user_image/default-user.png',
+             'role_id' => 1,
+             'gender_id' => rand(1, 3),
+             'name' => 'Angela Bartolo Arguelles',
+             'email' => 'angelaarguelles04@gmail.com',
+             'username' => 'admin',
+             'password' => Hash::make('123'),
+             'contact_number' => '123-456-7890',
+             'user_image' => 'user_image/default-user.png',
         ]);
 
         // Example: Create more users using factories
