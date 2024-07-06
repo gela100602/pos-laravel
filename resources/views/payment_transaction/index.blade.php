@@ -1,12 +1,14 @@
 @extends('layouts.master')
 
 @section('title')
-    Sales List
+    Transaction List
 @endsection
+
+<title>POS - Transaction</title>
 
 @section('breadcrumb')
     @parent
-    <li class="active">Sales List</li>
+    <li class="active">Transaction List</li>
 @endsection
 
 @section('content')
@@ -18,6 +20,7 @@
                     <thead>
                         <th width="5%">#</th>
                         <th>Date</th>
+                        <th>Customer</th>
                         <th>Quantity</th>
                         <th>Total Price</th>
                         <th>Discount</th>
@@ -31,7 +34,10 @@
     </div>
 </div>
 
-@includeIf('sales.detail')
+@includeIf('payment_transaction.detail')
+
+{{-- @include('transaction.form', ['discounts' => $discounts, 'users' => $users]) --}}
+
 @endsection
 
 @push('scripts')
@@ -50,11 +56,17 @@
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'date'},
+                {data: 'customer_id'},
                 {data: 'total_item'},
                 {data: 'total_price'},
-                {data: 'discount'},
-                {data: 'pay'},
-                {data: 'cashier'},
+                {
+                    data: 'percentage',
+                    render: function (data, type, row) {
+                        return parseFloat(data).toFixed(0) + '%'; // Ensure data is parsed as float and rounded to 0 decimal places
+                    }
+                },
+                {data: 'payment'},
+                {data: 'username'},
                 {data: 'action', searchable: false, sortable: false},
             ]
         });

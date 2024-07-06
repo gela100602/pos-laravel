@@ -4,6 +4,9 @@
     Payment Methods List
 @endsection
 
+<title>POS - Payment Method</title>
+
+
 @section('breadcrumb')
     @parent
     <li class="active">Payment Method List</li>

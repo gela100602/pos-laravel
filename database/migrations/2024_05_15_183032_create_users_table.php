@@ -35,6 +35,8 @@ return new class extends Migration
                 ->references('gender_id')
                 ->on('genders')
                 ->onUpdate('cascade');
+
+            // $table->rememberToken();
         });
 
     }

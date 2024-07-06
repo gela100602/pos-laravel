@@ -11,20 +11,11 @@ class Sales extends Model
 
     protected $table = 'sales';
     protected $primaryKey = 'sales_id';
-    protected $fillable = [
-        'role_id',
-        'gender_id',
-        'name',
-        'email',
-        'username',
-        'password',
-        'contact_number',
-        'user_image'
-    ];
+    protected $guarded = [];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'sales_id', 'id_user');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 }
 

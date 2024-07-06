@@ -4,6 +4,8 @@
     Customer List
 @endsection
 
+<title>POS - Customer</title>
+
 @section('breadcrumb')
     @parent
     <li class="active">Customer List</li>

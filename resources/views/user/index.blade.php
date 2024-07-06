@@ -2,6 +2,8 @@
 
 @section('title', 'User List')
 
+<title>POS - User</title>
+
 @section('breadcrumb')
     @parent
     <li class="active">User List</li>

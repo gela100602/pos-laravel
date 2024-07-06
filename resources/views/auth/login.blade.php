@@ -1,16 +1,14 @@
 @extends('layouts.auth')
 
 @section('login')
-<div class="login-box">
+<div class="login-box" style="margin-top: 12%">
 
-    <!-- /.login-logo -->
     <div class="login-box-body">
         <div class="login-logo">
             <a href="{{ url('/') }}">
                 <img src="{{ asset('img/logo.png') }}" alt="Logo" width="100">
             </a>
         </div>
-
         <form action="{{ route('login') }}" method="post" class="form-login">
             @csrf
             <div class="form-group has-feedback @error('email') has-error @enderror">
@@ -19,7 +17,7 @@
                 @error('email')
                     <span class="help-block">{{ $message }}</span>
                 @else
-                <span class="help-block with-errors"></span>
+                    <span class="help-block with-errors"></span>
                 @enderror
             </div>
             <div class="form-group has-feedback @error('password') has-error @enderror">
@@ -39,15 +37,17 @@
                         </label>
                     </div>
                 </div>
-                <!-- /.col -->
                 <div class="col-xs-4">
                     <button type="submit" class="btn btn-success btn-block btn-flat">Log In</button>
                 </div>
-                <!-- /.col -->
             </div>
         </form>
+
+        @if (Route::has('password.request'))
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                {{ __('Forgot your password?') }}
+            </a>
+        @endif
     </div>
-    <!-- /.login-box-body -->
 </div>
-<!-- /.login-box -->
 @endsection

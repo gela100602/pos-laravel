@@ -2,128 +2,150 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sales;
-use App\Models\SalesDetail;
+use App\Models\PaymentTransaction;
+use App\Models\Cart;
+use App\Models\Customer;
+use App\Models\Discount;
+use App\Models\User;
 use App\Models\Product;
-use App\Models\Setting;
+
+// use App\Models\Setting;
 use Illuminate\Http\Request;
-use PDF;
+// use PDF;
 
 class SalesController extends Controller
 {
     public function index()
     {
-        return view('sales.index');
+        $customers = Customer::pluck('customer_id', 'customer_id');
+        $discounts = Discount::pluck('percentage', 'discount_id');
+        $users = User::pluck('username', 'user_id');
+
+        return view('payment_transaction.index', compact('customers', 'discounts', 'users'));
     }
 
     public function data()
     {
-        $sales = Sales::with('member')->orderBy('id_sales', 'desc')->get();
+        $payment_transactions = PaymentTransaction::with('customer', 'discount', 'user')->orderBy('transaction_id', 'desc')->get();
 
         return datatables()
-            ->of($sales)
+            ->of($payment_transactions)
             ->addIndexColumn()
-            ->addColumn('total_item', function ($sales) {
-                return format_currency($sales->total_item);
+            ->addColumn('date', function ($payment_transactions) {
+                return format_date($payment_transactions->created_at, 'Y-m-d');
             })
-            ->addColumn('total_price', function ($sales) {
-                return '$ ' . format_currency($sales->total_price);
+            // ->addColumn('customer_id', function ($payment_transactions) {
+            //     $customer = $payment_transactions->customer->customer_id ?? '';
+            //     return '<span class="label label-success">'. $customer .'</span>';
+            // })
+            ->addColumn('customer_id', function ($payment_transactions) {
+                $customer = $payment_transactions->customer ? $payment_transactions->customer->customer_id : '';
+                return '<span class="label label-success">'. $customer .'</span>';
             })
-            ->addColumn('payment', function ($sales) {
-                return '$ ' . format_currency($sales->payment);
+            ->addColumn('total_item', function ($payment_transactions) {
+                return format_currency($payment_transactions->total_items);
             })
-            ->addColumn('date', function ($sales) {
-                //return format_date($sales->created_at, false);
+            ->addColumn('total_price', function ($payment_transactions) {
+                return '₱ ' . format_currency($payment_transactions->total_price);
             })
-
-            ->editColumn('discount', function ($sales) {
-                return $sales->discount . '%';
+            // ->editColumn('percentage', function ($payment_transactions) {
+            //     return $payment_transactions->discount->percentage . '%';
+            // })
+            // ->editColumn('percentage', function ($payment_transactions) {
+            //     return optional($payment_transactions->discount)->percentage . '%';
+            // })
+            ->editColumn('percentage', function ($payment_transactions) {
+                $percentage = $payment_transactions->discount ? $payment_transactions->discount->percentage . '%' : '';
+                return $percentage;
             })
-            ->editColumn('cashier', function ($sales) {
-                return $sales->user->name ?? '';
+            ->addColumn('payment', function ($payment_transactions) {
+                return '₱ ' . format_currency($payment_transactions->payment);
             })
-            ->addColumn('actions', function ($sales) {
+            ->editColumn('username', function ($payment_transactions) {
+                return $payment_transactions->user->username ?? '';
+            })
+            ->addColumn('action', function ($payment_transactions) {
                 return '
                 <div class="btn-group">
-                    <button onclick="showDetail(`' . route('sales.show', $sales->id_sales) . '`)" class="btn btn-xs btn-primary btn-flat"><i class="fa fa-eye"></i></button>
-                    <button onclick="deleteData(`' . route('sales.destroy', $sales->id_sales) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                    <button onclick="showDetail(`' . route('payment_transaction.show', $payment_transactions->transaction_id) . '`)" class="btn btn-xs btn-primary btn-flat"><i class="fa fa-eye"></i></button>
+                    <button onclick="deleteData(`' . route('payment_transaction.destroy', $payment_transactions->transaction_id) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
                 ';
             })
-            ->rawColumns(['actions', 'member_code'])
+            ->rawColumns(['action', 'customer_id', 'percentage', 'username'])
             ->make(true);
     }
 
-    public function create()
-    {
-        $sales = new Sales();
-        $sales->total_item = 0;
-        $sales->total_price = 0;
-        $sales->discount = 0;
-        $sales->payment = 0;
-        $sales->received = 0;
-        $sales->id_user = auth()->id();
-        $sales->save();
+    // public function create()
+    // {
+    //     $payment_transaction = new PaymentTransaction();
+    //     $payment_transaction->total_item = 0;
+    //     $payment_transaction->total_price = 0;
+    //     $payment_transaction->discount = 0;
+    //     $payment_transaction->pay = 0;
+    //     $payment_transaction->accepted = 0;
+    //     $payment_transaction->id_user = auth()->id();
+    //     $payment_transaction->save();
 
-        session(['id_sales' => $sales->id_sales]);
-        return redirect()->route('transaction.index');
-    }
+    //     session(['sales_id' => $payment_transaction->sales_id]);
+    //     return redirect()->route('transaction.index');
+    // }
 
-    public function store(Request $request)
-    {
-        $sales = Sales::findOrFail($request->id_sales);
-        $sales->total_item = $request->total_item;
-        $sales->total_price = $request->total;
-        $sales->discount = $request->discount;
-        $sales->payment = $request->payment;
-        $sales->received = $request->received;
-        $sales->update();
+    // public function store(Request $request)
+    // {
+    //     $sales = Sales::findOrFail($request->sales_id);
+    //     $sales->total_item = $request->total_item;
+    //     $sales->total_price = $request->total;
+    //     $sales->discount = $request->discount;
+    //     $sales->pay = $request->pay;
+    //     $sales->accepted = $request->accepted;
+    //     $sales->update();
 
-        $details = SalesDetail::where('id_sales', $sales->id_sales)->get();
-        foreach ($details as $item) {
-            $item->discount = $request->discount;
-            $item->update();
+    //     $details = SalesDetail::where('sales_id', $sales->sales_id)->get();
+    //     foreach ($details as $item) {
+    //         $item->discount = $request->discount;
+    //         $item->update();
 
-            $product = Product::find($item->id_product);
-            $product->stock -= $item->quantity;
-            $product->update();
-        }
+    //         $product = Product::find($item->id_product);
+    //         $product->stock -= $item->quantity;
+    //         $product->update();
+    //     }
 
-        return redirect()->route('transaction.complete');
-    }
+    //     return redirect()->route('transaction.complete');
+    // }
 
     public function show($id)
     {
-        $details = SalesDetail::with('product')->where('id_sales', $id)->get();
+        $details = Cart::with('product')->where('transaction_id', $id)->get();
 
         return datatables()
             ->of($details)
             ->addIndexColumn()
-            ->addColumn('product_code', function ($details) {
-                return '<span class="label label-success">' . $details->product->product_code . '</span>';
+            ->addColumn('product_id', function ($details) {
+                return '<span class="label label-success">' . $details->product->product_id . '</span>';
             })
             ->addColumn('product_name', function ($details) {
                 return $details->product->product_name;
             })
-            ->addColumn('sale_price', function ($details) {
-                return '$ ' . format_currency($details->sale_price);
+            ->addColumn('selling_price', function ($details) {
+                return '₱ ' . format_currency($details->selling_price);
             })
             ->addColumn('quantity', function ($details) {
                 return format_currency($details->quantity);
             })
             ->addColumn('subtotal', function ($details) {
-                return '$ ' . format_currency($details->subtotal);
+                return '₱ ' . format_currency($details->subtotal);
             })
-            ->rawColumns(['product_code'])
+            ->rawColumns(['product_id'])
             ->make(true);
     }
 
     public function destroy($id)
     {
-        $sales = Sales::find($id);
-        $details = SalesDetail::where('id_sales', $sales->id_sales)->get();
+        $payment_transactions = PaymentTransaction::find($id);
+        $details = Cart::where('transaction_id', $payment_transactions->transaction_id)->get();
         foreach ($details as $item) {
-            $product = Product::find($item->id_product);
+            $product = Product::find($item->product_id);
             if ($product) {
                 $product->stock += $item->quantity;
                 $product->update();
@@ -132,7 +154,7 @@ class SalesController extends Controller
             $item->delete();
         }
 
-        $sales->delete();
+        $payment_transactions->delete();
 
         return response(null, 204);
     }
@@ -147,12 +169,12 @@ class SalesController extends Controller
     // public function smallReceipt()
     // {
     //     $setting = Setting::first();
-    //     $sales = Sales::find(session('id_sales'));
+    //     $sales = Sales::find(session('sales_id'));
     //     if (!$sales) {
     //         abort(404);
     //     }
     //     $details = SalesDetail::with('product')
-    //         ->where('id_sales', session('id_sales'))
+    //         ->where('sales_id', session('sales_id'))
     //         ->get();
         
     //     return view('sales.small_receipt', compact('setting', 'sales', 'details'));
@@ -161,12 +183,12 @@ class SalesController extends Controller
     // public function largeReceipt()
     // {
     //     $setting = Setting::first();
-    //     $sales = Sales::find(session('id_sales'));
+    //     $sales = Sales::find(session('sales_id'));
     //     if (!$sales) {
     //         abort(404);
     //     }
     //     $details = SalesDetail::with('product')
-    //         ->where('id_sales', session('id_sales'))
+    //         ->where('sales_id', session('sales_id'))
     //         ->get();
 
     //     $pdf = PDF::loadView('sales.large_receipt', compact('setting', 'sales', 'details'));

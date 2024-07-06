@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->decimal('total_items', 10, 2);
             $table->decimal('total_price', 10, 2);
-            $table->unsignedBigInteger('discount_id')->default(0);
+            $table->unsignedBigInteger('discount_id')->nullable();
             $table->decimal('payment', 10, 2)->default(0);
             $table->decimal('received', 10, 2)->default(0);
             $table->unsignedBigInteger('user_id');

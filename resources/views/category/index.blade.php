@@ -4,6 +4,8 @@
     Category List
 @endsection
 
+<title>POS - Category</title>
+
 @section('breadcrumb')
     @parent
     <li class="active">Category List</li>

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'products';
     protected $primaryKey = 'product_id';
@@ -20,9 +20,9 @@ class Product extends Model
         'selling_price',
         'discount',
         'stock',
-        'product_image'
+        'product_image',
+        'is_deleted'
     ];
-    protected $dates = ['deleted_at'];
 
     public function category()
     {
@@ -32,5 +32,10 @@ class Product extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_deleted', 0);
     }
 }

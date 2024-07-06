@@ -39,25 +39,39 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     // Route::post('/products/delete-selected', [ProductController::class, 'deleteSelected'])->name('products.delete_selected');
     Route::resource('/products', ProductController::class);
-    Route::delete('products/{id}', [ProductController::class, 'delete'])->name('products.delete');
-    Route::get('products/restore/one/{id}', [ProductController::class, 'restore'])->name('products.restore');
-    Route::get('products/restore_all', [ProductController::class, 'restore_all'])->name('products.restore_all');
+    Route::patch('products/mark-as-deleted/{id}', [ProductController::class, 'markAsDeleted'])->name('products.markAsDeleted');
 
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::post('/users/delete-selected', [UserController::class, 'deleteSelected'])->name('users.delete_selected');
     Route::resource('/users', UserController::class);
 
-    Route::get('/transaction/new', [SalesController::class, 'create'])->name('transaction.new');
-    Route::post('/transaction/save', [SalesController::class, 'store'])->name('transaction.save');
-    Route::get('/transaction/complete', [SalesController::class, 'complete'])->name('transaction.complete');
-    Route::get('/transaction/small-receipt', [SalesController::class, 'smallReceipt'])->name('transaction.small_receipt');
-    Route::get('/transaction/large-receipt', [SalesController::class, 'largeReceipt'])->name('transaction.large_receipt');
+    Route::get('/transaction', [SalesController::class, 'index'])->name('payment_transaction.index');
+    Route::get('/transaction/data', [SalesController::class, 'data'])->name('payment_transaction.data');
+    Route::get('/transaction/{id}', [SalesController::class, 'show'])->name('payment_transaction.show');
+    Route::delete('/transaction/{id}', [SalesController::class, 'destroy'])->name('payment_transaction.destroy');
 
-    Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
-    Route::get('/transaction/loadform/{discount}/{total}/{received}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
-    Route::resource('/transaction', SalesDetailController::class)
-    ->except('create', 'show', 'edit');
+
+
+
+
+
+    // Route::get('/transaction/new', [SalesController::class, 'create'])->name('transaction.new');
+    // Route::post('/transaction/save', [SalesController::class, 'store'])->name('transaction.save');
+    // Route::get('/transaction/complete', [SalesController::class, 'complete'])->name('transaction.complete');
+    // Route::get('/transaction/small-receipt', [SalesController::class, 'smallReceipt'])->name('transaction.small_receipt');
+    // Route::get('/transaction/large-receipt', [SalesController::class, 'largeReceipt'])->name('transaction.large_receipt');
+
+    // Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
+
+    // Route::get('/transaction/loadform/{discount}/{total}/{received}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
+    // Route::resource('/transaction', SalesDetailController::class)
+    // ->except('create', 'show', 'edit');
+
+    // Route::get('/sales/data', [SalesController::class, 'data'])->name('sales.data');
+    // Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+    // Route::get('/sales/{id}', [SalesController::class, 'show'])->name('sales.show');
+    // Route::delete('/sales/{id}', [SalesController::class, 'destroy'])->name('sales.destroy');
 
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

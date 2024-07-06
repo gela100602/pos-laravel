@@ -2,6 +2,8 @@
 
 @section('title', 'Product List')
 
+<title>POS - Product</title>
+
 @section('breadcrumb')
     @parent
     <li class="active">Product List</li>
@@ -15,18 +17,6 @@
                 <div class="btn-group">
                     <button onclick="addForm('{{ route('products.store') }}')" class="btn btn-success btn-flat"><i class="fa fa-plus-circle"></i> Add New Product</button>
                     {{-- <button onclick="deleteSelected('{{ route('products.delete_selected') }}')" class="btn btn-danger btn-flat"><i class="fa fa-trash"></i> Delete</button> --}}
-                    @if(request()->has('view_deleted'))
-                    <a href="{{ route('products.restore_all') }}" class="btn btn-primary btn-flat">
-                        <i class="fa fa-undo"></i> Restore All
-                    </a>
-
-                    @else
-                    <a href="{{ route('products.index', ['view_deleted' => 'DeletedRecords']) }}" class="btn btn-primary btn-flat">
-                        <i class="fa fa-trash"></i> View Deleted Products
-                    </a>
-
-                    @endif
-
                 </div>
             </div>
             <div class="box-body table-responsive">
@@ -192,10 +182,10 @@
         if (confirm('Are you sure you want to delete selected data?')) {
             $.post(url, {
                     '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'delete'
+                    '_method': 'PATCH'
                 })
                 .done((response) => {
-                    table.ajax.reload();
+                    location.reload();
                 })
                 .fail((errors) => {
                     alert('Cannot delete data');

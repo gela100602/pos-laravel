@@ -4,6 +4,8 @@
     Supplier List
 @endsection
 
+<title>POS - Supplier</title>
+
 @section('breadcrumb')
     @parent
     <li class="active">Supplier List</li>

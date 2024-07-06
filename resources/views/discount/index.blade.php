@@ -4,6 +4,8 @@
     Discount List
 @endsection
 
+<title>POS - Discount</title>
+
 @section('breadcrumb')
     @parent
     <li class="active">Discount List</li>
@@ -48,10 +50,16 @@
                 }
             },
             columns: [
-                {data: 'DT_RowIndex', searchable: false, sortable: false},
-                {data: 'discount_type'},
-                {data: 'percentage'},
-                {data: 'action', searchable: false, sortable: false},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                {data: 'discount_type', name: 'discount_type'},
+                {
+                    data: 'percentage',
+                    name: 'percentage',
+                    render: function (data, type, row) {
+                        return parseFloat(data).toFixed(0) + '%'; // Ensure data is parsed as float and rounded to 0 decimal places
+                    }
+                },
+                {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
 
