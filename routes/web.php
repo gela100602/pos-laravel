@@ -54,8 +54,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
 
 
-
-
     // Route::get('/transaction/new', [SalesController::class, 'create'])->name('transaction.new');
     // Route::post('/transaction/save', [SalesController::class, 'store'])->name('transaction.save');
     // Route::get('/transaction/complete', [SalesController::class, 'complete'])->name('transaction.complete');

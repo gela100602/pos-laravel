@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        // Disable foreign key checks
+        /* // Disable foreign key checks
         Schema::disableForeignKeyConstraints();
 
         // Drop the discounts table
         Schema::dropIfExists('discounts');
 
         // Enable foreign key checks
-        Schema::enableForeignKeyConstraints();
+        Schema::enableForeignKeyConstraints(); */
     }
 
     /**
@@ -30,12 +30,12 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::create('discounts', function (Blueprint $table) {
+       /*  Schema::create('discounts', function (Blueprint $table) {
             $table->id('discount_id');
             $table->string('discount_type');
             $table->integer('percentage')->default(0);
             $table->timestamps();
-        });
+        }); */
     }
 
 

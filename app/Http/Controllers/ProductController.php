@@ -47,7 +47,7 @@ class ProductController extends Controller
                 return $product->category->category_name;
             })
             ->addColumn('supplier_name', function ($product) {
-                return $product->supplier->supplier_name;
+                return optional($product->supplier)->supplier_name ?? 'N/A';
             })
             ->addColumn('product_image', function ($product) {
 

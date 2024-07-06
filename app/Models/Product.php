@@ -34,8 +34,8 @@ class Product extends Model
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
-    public function scopeActive($query)
-    {
-        return $query->where('is_deleted', 0);
-    }
+    // public function scopeActive($query)
+    // {
+    //     return $query->where('is_deleted', 0);
+    // }
 }

@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+       /*  Schema::table('products', function (Blueprint $table) {
             $table->dropColumn('deleted_at');
             $table->boolean('is_deleted')->default(false);
-        });
+        }); */
     }
 
     /**
@@ -26,9 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
+       /*  Schema::table('products', function (Blueprint $table) {
             $table->softDeletes();
             $table->dropColumn('is_deleted');
-        });
+        }); */
     }
 };
