@@ -15,8 +15,8 @@ class DiscountSeeder extends Seeder
     public function run()
     {
         $discounts = [
-            ['discount_type' => 'Item Disount', 'percentage' => 10],
-            ['discount_type' => 'Item Disount', 'percentage' => 20],
+            ['discount_type' => 'Item Discount', 'percentage' => 10],
+            ['discount_type' => 'Item Discount', 'percentage' => 20],
         ];
 
         DB::table('discounts')->insert($discounts);

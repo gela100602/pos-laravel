@@ -34,10 +34,6 @@ class SalesController extends Controller
             ->addColumn('date', function ($payment_transactions) {
                 return format_date($payment_transactions->created_at, 'Y-m-d');
             })
-            // ->addColumn('customer_id', function ($payment_transactions) {
-            //     $customer = $payment_transactions->customer->customer_id ?? '';
-            //     return '<span class="label label-success">'. $customer .'</span>';
-            // })
             ->addColumn('customer_id', function ($payment_transactions) {
                 $customer = $payment_transactions->customer ? $payment_transactions->customer->customer_id : '';
                 return '<span class="label label-success">'. $customer .'</span>';
