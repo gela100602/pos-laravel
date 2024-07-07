@@ -62,7 +62,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::resource('/transaction', SalesDetailController::class)
         ->except('create', 'show', 'edit');
 
-
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
