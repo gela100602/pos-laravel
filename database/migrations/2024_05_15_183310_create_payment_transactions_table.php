@@ -18,11 +18,11 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->decimal('total_items', 10, 2);
             $table->decimal('total_price', 10, 2);
-            $table->unsignedBigInteger('discount_id')->nullable();
+            $table->unsignedBigInteger('discount_id')->default(0); // from nullable to default(0)
             $table->decimal('payment', 10, 2)->default(0);
             $table->decimal('received', 10, 2)->default(0);
             $table->unsignedBigInteger('user_id');
-            $table->timestamps();
+            $table->timestamps(); // made the created_at not null
 
             $table->foreign('customer_id')
                 ->references('customer_id')

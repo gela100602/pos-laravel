@@ -48,6 +48,7 @@ class ProductController extends Controller
             })
             ->addColumn('supplier_name', function ($product) {
                 return $product->supplier->supplier_name;
+                // return optional($product->supplier)->supplier_name ?? '';
             })
             ->addColumn('product_image', function ($product) {
 

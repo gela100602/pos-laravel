@@ -19,7 +19,7 @@ class PaymentTransactionSeeder extends Seeder
                 'customer_id' => 1,
                 'total_items' => 5,
                 'total_price' => 50.00,
-                'discount_id' => null,
+                'discount_id' => 0,
                 'payment' => 50.00,
                 'received' => 50.00,
                 'user_id' => 1,

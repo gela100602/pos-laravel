@@ -51,27 +51,16 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/transaction/{id}', [SalesController::class, 'show'])->name('payment_transaction.show');
     Route::delete('/transaction/{id}', [SalesController::class, 'destroy'])->name('payment_transaction.destroy');
 
-
-
-
-
-
-    // Route::get('/transaction/new', [SalesController::class, 'create'])->name('transaction.new');
-    // Route::post('/transaction/save', [SalesController::class, 'store'])->name('transaction.save');
-    // Route::get('/transaction/complete', [SalesController::class, 'complete'])->name('transaction.complete');
+    Route::get('/transaction/new', [SalesController::class, 'create'])->name('transaction.new');
+    Route::post('/transaction/save', [SalesController::class, 'store'])->name('transaction.save');
+    Route::get('/transaction/complete', [SalesController::class, 'complete'])->name('transaction.complete');
     // Route::get('/transaction/small-receipt', [SalesController::class, 'smallReceipt'])->name('transaction.small_receipt');
     // Route::get('/transaction/large-receipt', [SalesController::class, 'largeReceipt'])->name('transaction.large_receipt');
 
-    // Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
-
-    // Route::get('/transaction/loadform/{discount}/{total}/{received}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
-    // Route::resource('/transaction', SalesDetailController::class)
-    // ->except('create', 'show', 'edit');
-
-    // Route::get('/sales/data', [SalesController::class, 'data'])->name('sales.data');
-    // Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
-    // Route::get('/sales/{id}', [SalesController::class, 'show'])->name('sales.show');
-    // Route::delete('/sales/{id}', [SalesController::class, 'destroy'])->name('sales.destroy');
+    Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
+    Route::get('/transaction/loadform/{discount}/{total}/{received}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
+    Route::resource('/transaction', SalesDetailController::class)
+        ->except('create', 'show', 'edit');
 
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

@@ -72,43 +72,43 @@ class SalesController extends Controller
             ->make(true);
     }
 
-    // public function create()
-    // {
-    //     $payment_transaction = new PaymentTransaction();
-    //     $payment_transaction->total_item = 0;
-    //     $payment_transaction->total_price = 0;
-    //     $payment_transaction->discount = 0;
-    //     $payment_transaction->pay = 0;
-    //     $payment_transaction->accepted = 0;
-    //     $payment_transaction->id_user = auth()->id();
-    //     $payment_transaction->save();
+    public function create()
+    {
+        $payment_transactions = new PaymentTransaction();
+        $payment_transactions->total_items = 0;
+        $payment_transactions->total_price = 0;
+        $payment_transactions->discount_id = 0;
+        $payment_transactions->payment = 0;
+        $payment_transactions->received = 0;
+        $payment_transactions->user_id = auth()->id();
+        $payment_transactions->save();
 
-    //     session(['sales_id' => $payment_transaction->sales_id]);
-    //     return redirect()->route('transaction.index');
-    // }
+        session(['transaction_id' => $payment_transactions->transaction_id]);
+        return redirect()->route('payment_transaction.index');
+    }
 
-    // public function store(Request $request)
-    // {
-    //     $sales = Sales::findOrFail($request->sales_id);
-    //     $sales->total_item = $request->total_item;
-    //     $sales->total_price = $request->total;
-    //     $sales->discount = $request->discount;
-    //     $sales->pay = $request->pay;
-    //     $sales->accepted = $request->accepted;
-    //     $sales->update();
+    public function store(Request $request)
+    {
+        $payment_transactions = PaymentTransaction::findOrFail($request->transaction_id);
+        $payment_transactions->total_item = $request->total_item;
+        $payment_transactions->total_price = $request->total;
+        $payment_transactions->discount = $request->discount;
+        $payment_transactions->pay = $request->pay;
+        $payment_transactions->accepted = $request->accepted;
+        $payment_transactions->update();
 
-    //     $details = SalesDetail::where('sales_id', $sales->sales_id)->get();
-    //     foreach ($details as $item) {
-    //         $item->discount = $request->discount;
-    //         $item->update();
+        $details = Cart::where('transaction_id', $payment_transactions->transaction_id)->get();
+        foreach ($details as $item) {
+            $item->discount = $request->discount;
+            $item->update();
 
-    //         $product = Product::find($item->id_product);
-    //         $product->stock -= $item->quantity;
-    //         $product->update();
-    //     }
+            $product = Product::find($item->product_id);
+            $product->stock -= $item->quantity;
+            $product->update();
+        }
 
-    //     return redirect()->route('transaction.complete');
-    // }
+        return redirect()->route('transaction.complete');
+    }
 
     public function show($id)
     {
