@@ -15,16 +15,16 @@ class CreateSalesTable extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id('sales_id');
-            $table->unsignedBigInteger('id_user');
+            $table->unsignedBigInteger('user_id');
             $table->decimal('total_price', 15, 2);
             $table->integer('total_item');
-            $table->decimal('discount', 15, 2)->default(0);
+            $table->integer('discount')->default(0);
             $table->decimal('pay', 15, 2);
             $table->decimal('accepted', 15, 2);
             $table->timestamps();
 
-            $table->foreign('id_user')
-                ->references('id')
+            $table->foreign('user_id')
+                ->references('user_id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
