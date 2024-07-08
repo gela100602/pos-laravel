@@ -56,13 +56,12 @@
             </li>
             <li class="header">TRANSACTION</li>
             <li>
-                {{-- <a href="{{ route('payment_transaction.index') }}"> --}}
-                <a href="{{ route('transaction.new') }}">
+                <a href="{{ route('payment_transaction.index') }}">
                     <i class="fa fa-exchange"></i> <span>Payment Transaction</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('transaction.new') }}">
+                <a href="{{ route('transaction.new-transaction') }}">
                     <i class="fa fa-shopping-cart"></i> <span>Cart</span>
                 </a>
             </li>

@@ -84,7 +84,8 @@ class SalesController extends Controller
         $payment_transactions->save();
 
         session(['transaction_id' => $payment_transactions->transaction_id]);
-        return redirect()->route('payment_transaction.index');
+        return view('cart.index');
+        
     }
 
     public function store(Request $request)
