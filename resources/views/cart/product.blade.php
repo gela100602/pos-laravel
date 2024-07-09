@@ -16,7 +16,7 @@
                         <th><i class="fa fa-cog"></i></th>
                     </thead>
                     <tbody>
-                        @foreach ($product as $key => $item)
+                        @foreach ($products as $key => $item)
                             <tr>
                                 <td width="5%">{{ $key + 1 }}</td>
                                 <td><span class="label label-success">{{ $item->product_id }}</span></td>

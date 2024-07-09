@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PaymentTransactonController;
 use App\Http\Controllers\SalesDetailController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 
@@ -47,8 +48,8 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/users/delete-selected', [UserController::class, 'deleteSelected'])->name('users.delete_selected');
     Route::resource('/users', UserController::class);
 
-    Route::get('/transaction/payment', [SalesController::class, 'index'])->name('payment_transaction.index');
-    Route::get('/transaction/data', [SalesController::class, 'data'])->name('payment_transaction.data');
+    Route::get('/transaction/payments', [SalesController::class, 'index'])->name('payment_transaction.index');
+    Route::get('/transaction/payments/data', [SalesController::class, 'data'])->name('payment_transaction.data');
     Route::get('/transaction/{id}', [SalesController::class, 'show'])->name('payment_transaction.show');
     Route::delete('/transaction/{id}', [SalesController::class, 'destroy'])->name('payment_transaction.destroy');
 
@@ -59,10 +60,17 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     // Route::get('/transaction/large-receipt', [SalesController::class, 'largeReceipt'])->name('transaction.large_receipt');
     
     Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
-    Route::get('/transaction/loadform/{discount}/{total}/{received}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
-    Route::resource('/transaction', SalesDetailController::class)
-        ->except('create', 'show', 'edit');
+    Route::get('/transaction/loadform/{discount?}/{total?}/{received?}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
+    Route::resource('/transaction', SalesDetailController::class)->except('create', 'show', 'edit');
     
+    Route::put('/transaction/cart/{id}', [CartController::class, 'updateCart'])->name('transaction.update');
+    Route::delete('/transaction/cart/{id}', [CartController::class, 'destroyCartItem'])->name('selectedCartProduct.destroy');
+    Route::post('/transaction/cart/saveTransaction', [CartController::class, 'saveTransaction'])->name('transactionCart.cartSave');
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/transaction/data/{transactionId}', [SalesController::class, 'data'])->name('transaction.data');
+    Route::post('/Cart/AddToCart', [CartController::class, 'store'])->name('transaction.store');
+
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 

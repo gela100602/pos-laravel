@@ -1,4 +1,4 @@
-<div class="modal fade" id="modal-member" tabindex="-1" role="dialog" aria-labelledby="modal-member">
+<div class="modal fade" id="modal-customer" tabindex="-1" role="dialog" aria-labelledby="modal-customer">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,7 +7,7 @@
                 <h4 class="modal-title">Select Customers</h4>
             </div>
             <div class="modal-body">
-                <table class="table table-striped table-bordered table-member table-hover">
+                <table class="table table-striped table-bordered table-customer table-hover">
                     <thead>
                         <th width="5%">#</th>
                         <th>Name</th>
@@ -16,7 +16,7 @@
                         <th><i class="fa fa-cog"></i></th>
                     </thead>
                     <tbody>
-                        @foreach ($member as $key => $item)
+                        @foreach ($customers as $key => $item)  
                             <tr>
                                 <td width="5%">{{ $key + 1 }}</td>
                                 <td>{{ $item->name }}</td>

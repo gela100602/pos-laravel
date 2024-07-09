@@ -61,7 +61,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('transaction.new-transaction') }}">
+                <a href="{{ route('cart.index') }}">
                     <i class="fa fa-shopping-cart"></i> <span>Cart</span>
                 </a>
             </li>

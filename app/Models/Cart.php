@@ -23,11 +23,15 @@ class Cart extends Authenticatable
 
     public function transaction()
     {
-        return $this->belongsTo('App\Models\PaymentTransaction', 'transaction_id');
+        return $this->belongsTo(PaymentTransaction::class, 'transaction_id');
     }
 
     public function product()
     {
         return $this->belongsTo('App\Models\Product', 'product_id');
+    }
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class)->withDefault();   
     }
 }

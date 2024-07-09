@@ -25,16 +25,21 @@ class PaymentTransaction extends Authenticatable
 
     public function customer()
     {
-        return $this->belongsTo('App\Models\Customer', 'customer_id');
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     public function discount()
     {
-        return $this->belongsTo('App\Models\Discount', 'discount_id');
+        return $this->belongsTo(Discount::class, 'discount_id');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User', 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'transaction_id', 'transaction_id');
     }
 }
