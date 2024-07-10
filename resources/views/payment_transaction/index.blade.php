@@ -44,68 +44,68 @@
 <script>
     let table, table1;
 
-    $(function () {
-        table = $('.table-sales').DataTable({
-            responsive: true,
-            processing: true,
-            serverSide: true,
-            autoWidth: false,
-            ajax: {
-                url: '{{ route('payment_transaction.data') }}',
+$(function () {
+    table = $('.table-sales').DataTable({
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        autoWidth: false,
+        ajax: {
+            url: '{{ route('payment_transaction.data') }}',
+        },
+        columns: [
+            {data: 'DT_RowIndex', searchable: false, sortable: false},
+            {data: 'date'},
+            {data: 'customer_id'},
+            {data: 'total_item'},
+            {data: 'total_price'},
+            {
+                data: 'percentage',
+                render: function (data, type, row) {
+                    return parseFloat(data).toFixed(0) + '%';
+                }
             },
-            columns: [
-                {data: 'DT_RowIndex', searchable: false, sortable: false},
-                {data: 'date'},
-                {data: 'customer_id'},
-                {data: 'total_item'},
-                {data: 'total_price'},
-                {
-                    data: 'percentage',
-                    render: function (data, type, row) {
-                        return parseFloat(data).toFixed(0) + '%'; // Ensure data is parsed as float and rounded to 0 decimal places
-                    }
-                },
-                {data: 'payment'},
-                {data: 'username'},
-                {data: 'action', searchable: false, sortable: false},
-            ]
-        });
-
-        table1 = $('.table-detail').DataTable({
-            processing: true,
-            bSort: false,
-            dom: 'Brt',
-            columns: [
-                {data: 'DT_RowIndex', searchable: false, sortable: false},
-                {data: 'product_name'},
-                {data: 'selling_price'},
-                {data: 'quantity'},
-                {data: 'subtotal'},
-            ]
-        })
+            {data: 'payment'},
+            {data: 'username'},
+            {data: 'action', searchable: false, sortable: false},
+        ]
     });
 
-    function showDetail(url) {
-        $('#modal-detail').modal('show');
+    table1 = $('.table-detail').DataTable({
+        processing: true,
+        bSort: false,
+        dom: 'Brt',
+        columns: [
+            {data: 'DT_RowIndex', searchable: false, sortable: false},
+            {data: 'product_name'},
+            {data: 'selling_price'},
+            {data: 'quantity'},
+            {data: 'subtotal'},
+        ]
+    });
+});
 
-        table1.ajax.url(url);
-        table1.ajax.reload();
-    }
+function showDetail(url) {
+    $('#modal-detail').modal('show');
 
-    function deleteData(url) {
-        if (confirm('Are you sure you want to delete selected data?')) {
-            $.post(url, {
-                    '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'delete'
-                })
-                .done((response) => {
-                    table.ajax.reload();
-                })
-                .fail((errors) => {
-                    alert('Unable to delete data');
-                    return;
-                });
-        }
+    table1.ajax.url(url);
+    table1.ajax.reload();
+}
+
+function deleteData(url) {
+    if (confirm('Are you sure you want to delete selected data?')) {
+        $.post(url, {
+                '_token': $('[name=csrf-token]').attr('content'),
+                '_method': 'delete'
+            })
+            .done((response) => {
+                table.ajax.reload();
+            })
+            .fail((errors) => {
+                alert('Unable to delete data');
+                return;
+            });
     }
+}
 </script>
 @endpush

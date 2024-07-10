@@ -49,7 +49,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::resource('/users', UserController::class);
 
     Route::get('/transaction/payments', [SalesController::class, 'index'])->name('payment_transaction.index');
-    Route::get('/transaction/payments/data', [SalesController::class, 'data'])->name('payment_transaction.data');
+    Route::get('/transaction/payments/data', [SalesController::class, 'data'])->name('payment_transaction.data'); // current fixing
     Route::get('/transaction/{id}', [SalesController::class, 'show'])->name('payment_transaction.show');
     Route::delete('/transaction/{id}', [SalesController::class, 'destroy'])->name('payment_transaction.destroy');
 

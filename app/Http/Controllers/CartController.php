@@ -25,17 +25,25 @@ class CartController extends Controller
         if (session()->has('transactionId')) {
             $transactionId = session('transactionId');
         } else {
-            // Create a new PaymentTransaction
-            $paymentTransaction = new PaymentTransaction();
-            $paymentTransaction->total_items = 0;
-            $paymentTransaction->total_price = 0;
-            $paymentTransaction->discount_id = null; // default
-            $paymentTransaction->payment = 0;
-            $paymentTransaction->received = 0;
-            $paymentTransaction->user_id = auth()->id();
-            $paymentTransaction->save();
+            // Check for an existing PaymentTransaction where received is 0 this will load the last transaction that has not been save
+            $paymentTransaction = PaymentTransaction::where('received', 0.00)->orderBy('created_at', 'desc')->first();
 
-            $transactionId = $paymentTransaction->transaction_id;
+            if ($paymentTransaction) {
+                $transactionId = $paymentTransaction->transaction_id;
+            } else {
+                // Create a new PaymentTransaction
+                $paymentTransaction = new PaymentTransaction();
+                $paymentTransaction->total_items = 0;
+                $paymentTransaction->total_price = 0;
+                $paymentTransaction->customer_id = null;
+                $paymentTransaction->discount_id = null; // default
+                $paymentTransaction->payment = 0.00;
+                $paymentTransaction->received = 0.00;
+                $paymentTransaction->user_id = auth()->id();
+                $paymentTransaction->save();
+
+                $transactionId = $paymentTransaction->transaction_id;
+            }
 
             // Store transactionId in session
             session(['transactionId' => $transactionId]);
@@ -48,6 +56,7 @@ class CartController extends Controller
 
         return view('cart.index', compact('transactionId', 'products', 'customers', 'discounts'));
     }
+
 
 
     /**
@@ -69,9 +78,7 @@ class CartController extends Controller
     public function store(Request $request)
     {
         try {
-            // Log incoming request data for debugging
-            Log::info('Request data:', $request->all());
-
+           
             // Retrieve or create the payment transaction
             $paymentTransaction = PaymentTransaction::findOrFail($request->transaction_id);
 

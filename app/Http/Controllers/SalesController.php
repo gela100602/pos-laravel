@@ -24,34 +24,31 @@ class SalesController extends Controller
         return view('payment_transaction.index', compact('customers', 'discounts', 'users'));
     }
 
-    public function data($transactionId)
+    public function data()
     {
         try {
-            $payment_transactions = PaymentTransaction::where('transaction_id', $transactionId)
-                ->with(['carts.product', 'carts.discount'])
+            $payment_transactions = PaymentTransaction::with(['customer', 'discount', 'user'])
+                ->where('received', '!=', 0.00)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
             // Prepare DataTables response
             $data = [];
-            foreach ($payment_transactions as $payment_transaction) {
-                foreach ($payment_transaction->carts as $cart) {
-                    $discountPercentage = optional($cart->discount)->percentage ?? 0;
-
-                    $data[] = [
-                        'DT_RowIndex' => '',
-                        'cart_id' => $cart->cart_id,
-                        'product_id' => optional($cart->product)->product_id,
-                        'product_name' => optional($cart->product)->product_name,
-                        'selling_price' => $cart->selling_price,
-                        'quantity' => $cart->quantity,
-                        'discount' => $discountPercentage,
-                        'subtotal' => $cart->subtotal,
-                        'action' => '<div class="btn-group">
-                                        <button onclick="deleteData(`'. route('selectedCartProduct.destroy', $cart->cart_id) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-                                    </div>',
-                    ];
-                }
+            foreach ($payment_transactions as $index => $payment_transaction) {
+                $data[] = [
+                    'DT_RowIndex' => $index + 1,
+                    'date' => $payment_transaction->created_at->format('Y-m-d'),
+                    'customer_id' => optional($payment_transaction->customer)->name ?? "N/A",
+                    'total_item' => $payment_transaction->total_items,
+                    'total_price' => $payment_transaction->total_price,
+                    'percentage' => optional($payment_transaction->discount)->percentage ?? 0,
+                    'payment' => $payment_transaction->payment,
+                    'username' => optional($payment_transaction->user)->username,
+                    'action' => '<div class="btn-group">
+                                    <button onclick="showDetail(`'. route('payment_transaction.show', $payment_transaction->transaction_id) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-eye"></i></button>
+                                    <button onclick="deleteData(`'. route('payment_transaction.destroy', $payment_transaction->transaction_id) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                                </div>',
+                ];
             }
 
             return response()->json(['data' => $data]);
@@ -62,6 +59,7 @@ class SalesController extends Controller
             ], 500);
         }
     }
+
 
 
     public function create()
