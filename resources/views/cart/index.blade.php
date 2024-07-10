@@ -89,7 +89,9 @@
                         <form class="form-sale" id="form-sale" method="POST">
                             @csrf
                             <input type="hidden" name="transaction_id" id="transaction_id" value="{{ $transactionId }}">
-                            
+                            <input type="hidden" name="customer_id" id="customer_id_hidden" value="{{ $transaction->customer_id ?? '' }}">
+                            <input type="hidden" name="discount_id" id="discount_id_hidden" value="{{ $transaction->discount_id ?? '' }}">
+
                             <div class="form-group row">
                                 <label for="total_display" class="col-lg-2 control-label">Total</label>
                                 <div class="col-lg-8">
@@ -101,7 +103,7 @@
                                 <label for="customer_id" class="col-lg-2 control-label">Customer</label>
                                 <div class="col-lg-8">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="customer_id" value="" readonly>
+                                        <input type="text" class="form-control" id="customer_id_display" value="" readonly>
                                         <span class="input-group-btn">  
                                             <button onclick="showCustomer()" class="btn btn-success btn-flat" type="button"><i class="fa fa-search-plus"></i></button>
                                         </span>
@@ -113,7 +115,7 @@
                                 <label for="discount" class="col-lg-2 control-label">Discount</label>
                                 <div class="col-lg-8">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="discount" value="" readonly>
+                                        <input type="text" class="form-control" id="discount_display" value="" readonly>
                                         <span class="input-group-btn">
                                             <button onclick="showDiscount()" class="btn btn-success btn-flat" type="button"><i class="fa fa-search-plus"></i></button>
                                         </span>
@@ -292,6 +294,7 @@
                 success: function (response) {
                     console.log('Transaction saved successfully:', response);
                     alert('Transaction saved successfully');
+                    window.location.reload();
                 },
                 error: function (xhr, status, error) {
                     alert('Failed to save transaction. Please try again.');
@@ -306,7 +309,7 @@
 
     function calculateTotal() {
         let total = 0;
-        let discountValue = $('#discount').val().replace('%', '');
+        let discountValue = $('#discount_display').val().replace('%', '');
         let discount = parseInt(discountValue) || 0;
 
         $('.sales-table tbody tr').each(function () {
@@ -379,7 +382,7 @@
                 } else {
                     console.error('DataTable `table` is not initialized correctly.');
                 }
-                loadForm($('#discount').val());
+                loadForm($('#discount_display').val());
             },
             error: function (xhr, status, error) {
                 var errorMessage = 'Unable to add product.';
@@ -401,7 +404,8 @@
     }
 
     function selectCustomer(customer_id) {
-        $('#customer_id').val(customer_id);
+        $('#customer_id_display').val(customer_id);
+        $('#customer_id_hidden').val(customer_id);
         $('#received').val(0).focus().select();
         hideCustomer();
     }
@@ -415,7 +419,8 @@
     }
 
     function selectDiscount(discount_id, percentage) {
-        $('#discount_id').val(discount_id);
+        $('#discount_display').val(percentage + '%');
+        $('#discount_id_hidden').val(discount_id);
         $('#discount').val(percentage + '%');
         $('#received').val(0).focus().select();
         hideDiscount();

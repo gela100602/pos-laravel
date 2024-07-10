@@ -57,6 +57,44 @@ class CartController extends Controller
         return view('cart.index', compact('transactionId', 'products', 'customers', 'discounts'));
     }
 
+    public function data($transactionId)
+    {
+        try {
+            $payment_transactions = PaymentTransaction::where('transaction_id', $transactionId)
+                ->with(['carts.product', 'carts.discount'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Prepare DataTables response
+            $data = [];
+            foreach ($payment_transactions as $payment_transaction) {
+                foreach ($payment_transaction->carts as $cart) {
+                    $discountPercentage = optional($cart->discount)->percentage ?? 0;
+
+                    $data[] = [
+                        'DT_RowIndex' => '',
+                        'cart_id' => $cart->cart_id,
+                        'product_id' => optional($cart->product)->product_id,
+                        'product_name' => optional($cart->product)->product_name,
+                        'selling_price' => $cart->selling_price,
+                        'quantity' => $cart->quantity,
+                        'discount' => $discountPercentage,
+                        'subtotal' => $cart->subtotal,
+                        'action' => '<div class="btn-group">
+                                        <button onclick="deleteData('. route('selectedCartProduct.destroy', $cart->cart_id) .')" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                                    </div>',
+                    ];
+                }
+            }
+
+            return response()->json(['data' => $data]);
+        } catch (\Exception $e) {
+            // Log or handle the exception as needed
+            return response()->json([
+                'error' => 'Exception Message: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 
     /**

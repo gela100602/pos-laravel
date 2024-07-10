@@ -59,7 +59,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     // Route::get('/transaction/small-receipt', [SalesController::class, 'smallReceipt'])->name('transaction.small_receipt');
     // Route::get('/transaction/large-receipt', [SalesController::class, 'largeReceipt'])->name('transaction.large_receipt');
     
-    Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data');
+    /* Route::get('/transaction/{id}/data', [SalesDetailController::class, 'data'])->name('transaction.data'); */
     Route::get('/transaction/loadform/{discount?}/{total?}/{received?}', [SalesDetailController::class, 'loadForm'])->name('transaction.load_form');
     Route::resource('/transaction', SalesDetailController::class)->except('create', 'show', 'edit');
     
@@ -68,7 +68,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/transaction/cart/saveTransaction', [CartController::class, 'saveTransaction'])->name('transactionCart.cartSave');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::get('/transaction/data/{transactionId}', [SalesController::class, 'data'])->name('transaction.data');
+    Route::get('/transaction/data/{transactionId}', [CartController::class, 'data'])->name('transaction.data');
     Route::post('/Cart/AddToCart', [CartController::class, 'store'])->name('transaction.store');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
